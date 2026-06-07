@@ -18,10 +18,11 @@ const NEEDS_PROXY  = IS_CF;                      // only CF has the server-side 
 // Application State
 const state = {
     config: {
-        // These are used ONLY in local dev mode.
-        // On Cloudflare Pages, credentials live server-side only.
-        DOMAIN_ENDPOINT: '',
-        BEARER_TOKEN: ''
+        // Fallback defaults — used when .env cannot be loaded (e.g. GitHub Pages without .env in repo)
+        // Priority chain: localStorage override > .env file > these defaults
+        // On Cloudflare Pages, NEEDS_PROXY=true so these values are never used (CF Function handles auth)
+        DOMAIN_ENDPOINT: 'https://endpoints.jainassociates.co.in',
+        BEARER_TOKEN: '221120032903200005022000'
     },
     envReady: false,   // true once credentials are confirmed available
     activeTab: 'pan-verify',
@@ -115,12 +116,12 @@ async function loadEnvironment() {
         console.warn('[DEV] Could not fetch .env:', err.message);
     }
 
-    // Priority: localStorage overrides > .env file
+    // Priority: localStorage override > .env file > hardcoded defaults in state.config
     const savedEndpoint = localStorage.getItem('cfg_endpoint');
     const savedToken    = localStorage.getItem('cfg_token');
 
-    state.config.DOMAIN_ENDPOINT = savedEndpoint || envVars.DOMAIN_ENDPOINT || '';
-    state.config.BEARER_TOKEN    = savedToken    || envVars.BEARER_TOKEN    || '';
+    state.config.DOMAIN_ENDPOINT = savedEndpoint || envVars.DOMAIN_ENDPOINT || state.config.DOMAIN_ENDPOINT;
+    state.config.BEARER_TOKEN    = savedToken    || envVars.BEARER_TOKEN    || state.config.BEARER_TOKEN;
     state.envReady = !!(state.config.DOMAIN_ENDPOINT && state.config.BEARER_TOKEN);
 
     // Populate settings modal (only shown locally)
