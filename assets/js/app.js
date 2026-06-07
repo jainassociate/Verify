@@ -116,12 +116,13 @@ async function loadEnvironment() {
         console.warn('[DEV] Could not fetch .env:', err.message);
     }
 
-    // Priority: localStorage override > .env file > hardcoded defaults in state.config
+    // Priority: window.APP_CONFIG (GitHub Actions secrets) > localStorage > .env file > hardcoded defaults
+    const ciConfig      = window.APP_CONFIG || {};
     const savedEndpoint = localStorage.getItem('cfg_endpoint');
     const savedToken    = localStorage.getItem('cfg_token');
 
-    state.config.DOMAIN_ENDPOINT = savedEndpoint || envVars.DOMAIN_ENDPOINT || state.config.DOMAIN_ENDPOINT;
-    state.config.BEARER_TOKEN    = savedToken    || envVars.BEARER_TOKEN    || state.config.BEARER_TOKEN;
+    state.config.DOMAIN_ENDPOINT = savedEndpoint || ciConfig.DOMAIN_ENDPOINT || envVars.DOMAIN_ENDPOINT || state.config.DOMAIN_ENDPOINT;
+    state.config.BEARER_TOKEN    = savedToken    || ciConfig.BEARER_TOKEN    || envVars.BEARER_TOKEN    || state.config.BEARER_TOKEN;
     state.envReady = !!(state.config.DOMAIN_ENDPOINT && state.config.BEARER_TOKEN);
 
     // Populate settings modal (only shown locally)

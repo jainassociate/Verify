@@ -1,1 +1,16 @@
+# Environment / credentials
 .env
+
+# Auto-generated at deploy time by GitHub Actions (contains secrets — never commit the real one)
+# The placeholder assets/js/config.js IS committed (with empty values)
+# This rule prevents accidentally committing a locally-generated one with real values
+# Uncomment the line below if you generate config.js locally for testing:
+# assets/js/config.js
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
