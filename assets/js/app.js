@@ -521,9 +521,14 @@ function renderPanResults(data, dob) {
         <div class="result-card ${badgeClass}-border">
             <div class="result-card-header">
                 <h3>PAN Lookup Results: <span class="highlight-code text-uppercase">${escapeHtml(data.pan)}</span></h3>
-                <span class="badge ${badgeClass}">
-                    <i class="fas fa-${badgeIcon}"></i> ${escapeHtml(data.status)}
-                </span>
+                <div style="margin-left: auto; display: flex; gap: 8px;">
+                    <span class="badge ${badgeClass}">
+                        <i class="fas fa-${badgeIcon}"></i> ${escapeHtml(data.status)}
+                    </span>
+                    <button class="action-btn secondary" style="padding: 4px 12px; font-size: 0.8rem;" onclick="exportToPDF(this, 'PAN_Report_${data.pan}')">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
             </div>
             <div class="result-card-body">
                 <div class="details-grid">
@@ -662,9 +667,14 @@ function renderPanToGstnResults(data) {
         <div class="result-card traces-theme">
             <div class="result-card-header">
                 <h3>PAN to GSTN Mapping: <span class="text-uppercase">${escapeHtml(data.pan)}</span></h3>
-                <span class="badge info">
-                    <i class="fas fa-link"></i> ${data.count} Registered
-                </span>
+                <div style="margin-left: auto; display: flex; gap: 8px;">
+                    <span class="badge info">
+                        <i class="fas fa-link"></i> ${data.count} Registered
+                    </span>
+                    <button class="action-btn secondary" style="padding: 4px 12px; font-size: 0.8rem;" onclick="exportToPDF(this, 'PAN_GSTN_Report_${data.pan}')">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
             </div>
             <div class="result-card-body">
                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">The following GST registrations are registered under PAN holder. Click on "View Registry Details" to pull the detailed state folder.</p>
@@ -741,9 +751,14 @@ function renderGstinDetailsResults(data) {
         <div class="result-card ${badgeClass}-border">
             <div class="result-card-header">
                 <h3>GSTIN Profile: <span class="highlight-code text-uppercase">${escapeHtml(data.gstin)}</span></h3>
-                <span class="badge ${badgeClass}">
-                    <i class="fas fa-${badgeIcon}"></i> Status: ${escapeHtml(data.status)}
-                </span>
+                <div style="margin-left: auto; display: flex; gap: 8px;">
+                    <span class="badge ${badgeClass}">
+                        <i class="fas fa-${badgeIcon}"></i> Status: ${escapeHtml(data.status)}
+                    </span>
+                    <button class="action-btn secondary" style="padding: 4px 12px; font-size: 0.8rem;" onclick="exportToPDF(this, 'GSTIN_Report_${data.gstin}')">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
             </div>
             <div class="result-card-body">
                 <div class="details-grid" style="margin-bottom: 24px;">
@@ -955,3 +970,32 @@ function renderSearchHistory() {
 
     elements.historyTableBody.innerHTML = rowsHtml;
 }
+
+// ----------------------------------------------------
+// PDF EXPORT UTILITY
+// ----------------------------------------------------
+window.exportToPDF = function(btn, filename) {
+    if (typeof html2pdf === 'undefined') {
+        alert("PDF export library is still loading. Please try again in a few seconds.");
+        return;
+    }
+
+    const card = btn.closest('.result-card');
+    
+    // Temporarily hide action buttons during PDF generation
+    const actionElements = card.querySelectorAll('button, .result-card-footer, .gstin-item-actions');
+    actionElements.forEach(el => el.style.display = 'none');
+
+    const opt = {
+        margin:       0.5,
+        filename:     filename + '.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(card).save().then(() => {
+        // Restore action buttons
+        actionElements.forEach(el => el.style.display = '');
+    });
+};
