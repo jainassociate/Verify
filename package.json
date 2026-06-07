@@ -1,0 +1,14 @@
+{
+  "name": "verify.jainassociates.co.in",
+  "version": "1.0.0",
+  "description": "Tax Intelligence & Verification Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2"
+  }
+}

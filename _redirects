@@ -1,0 +1,7 @@
+# Cloudflare Pages - Redirects
+
+# Redirect root to index.html (already default, but explicit for safety)
+/ /index.html 200
+
+# Catch-all: serve index.html for any unmatched path (SPA fallback)
+/* /index.html 200

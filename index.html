@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jain and Associates</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+
+    <!-- App Container -->
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="emblem-container">
+                    <!-- Custom SVG Emblem representing authority/trust -->
+                    <svg viewBox="0 0 50 50" width="40" height="40" class="gov-emblem">
+                        <circle cx="25" cy="25" r="23" fill="none" stroke="currentColor" stroke-width="2" />
+                        <path d="M25 5 L28 15 L38 15 L30 22 L33 32 L25 26 L17 32 L20 22 L12 15 L22 15 Z"
+                            fill="currentColor" />
+                        <circle cx="25" cy="25" r="7" fill="none" stroke="var(--bg-card)" stroke-width="2" />
+                    </svg>
+                </div>
+                <div class="brand-details">
+                    <h1>Verify</h1>
+                    <span class="sub-brand">Jain and Associates</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="server-status-pill online" id="serverStatusPill">
+                    <span class="status-dot"></span>
+                    <span id="serverStatusText">System Online</span>
+                </div>
+                <button class="icon-btn settings-trigger" id="openSettingsBtn" title="API Configuration Settings">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <div class="app-body">
+
+            <!-- Sidebar Navigation -->
+            <aside class="app-sidebar">
+                <div class="sidebar-menu">
+                    <button class="menu-item active" data-tab="pan-verify">
+                        <div class="menu-icon"><i class="fas fa-id-card"></i></div>
+                        <div class="menu-label">
+                            <span class="title">PAN Verification</span>
+                            <span class="desc">Verify Cardholders & DOB</span>
+                        </div>
+                    </button>
+
+                    <button class="menu-item" data-tab="pan-to-gstn">
+                        <div class="menu-icon"><i class="fas fa-link"></i></div>
+                        <div class="menu-label">
+                            <span class="title">PAN to GSTN Finder</span>
+                            <span class="desc">Map PAN to Registrations</span>
+                        </div>
+                    </button>
+
+                    <button class="menu-item" data-tab="gstin-details">
+                        <div class="menu-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="menu-label">
+                            <span class="title">GSTN Details Finder</span>
+                            <span class="desc">Fetch Business Registry</span>
+                        </div>
+                    </button>
+
+                    <button class="menu-item" data-tab="search-history">
+                        <div class="menu-icon"><i class="fas fa-history"></i></div>
+                        <div class="menu-label">
+                            <span class="title">Verification Logs</span>
+                            <span class="desc">History & Local Reports</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Environment Variable Status Widget -->
+                <div class="env-status-widget">
+                    <div class="widget-header">
+                        <i class="fas fa-server"></i>
+                        <span>Environment Status</span>
+                    </div>
+                    <div class="widget-body">
+                        <div class="status-row">
+                            <span class="lbl">API Server:</span>
+                            <span class="val text-truncate" id="envEndpoint">Connecting...</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="lbl">Auth Key:</span>
+                            <span class="val" id="envTokenState"><i class="fas fa-circle-notch fa-spin"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="app-content">
+
+                <!-- Tab Panel: PAN Verification -->
+                <div class="tab-panel active" id="pan-verify">
+                    <div class="panel-header">
+                        <h2>PAN Verification Service</h2>
+                        <p>Verify a Permanent Account Number (PAN) details and match it with the taxpayer's registered
+                            Date of Birth (DOB) directly against official records.</p>
+                    </div>
+
+                    <div class="panel-card input-card">
+                        <form id="panVerifyForm" class="verification-form">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="panVerifyInput">
+                                        Permanent Account Number (PAN) <span class="required">*</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-id-card input-icon"></i>
+                                        <input type="text" id="panVerifyInput" class="form-input text-uppercase"
+                                            placeholder="e.g. ABCPR1234K" maxlength="10" autocomplete="off" required>
+                                        <span class="validation-status-icon"><i class="fas"></i></span>
+                                    </div>
+                                    <span class="input-hint">10-digit alphanumeric code: 5 letters, 4 numbers, 1
+                                        letter</span>
+                                    <span class="error-msg" id="panVerifyError">Please enter a valid PAN format.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dobInput">
+                                        Date of Birth (DOB) <span class="required">*</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-calendar-alt input-icon"></i>
+                                        <input type="text" id="dobInput" class="form-input" placeholder="DD/MM/YYYY"
+                                            maxlength="10" autocomplete="off" required>
+                                        <span class="validation-status-icon"><i class="fas"></i></span>
+                                    </div>
+                                    <span class="input-hint">Enter date in DD/MM/YYYY format (e.g. 29/03/2001)</span>
+                                    <span class="error-msg" id="dobError">Enter a valid date: DD/MM/YYYY (e.g.
+                                        29/03/2001)</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="panVerifyBtn" disabled>
+                                <span class="btn-text">Verify PAN Card</span>
+                                <span class="btn-spinner"><i class="fas fa-circle-notch fa-spin"></i></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- PAN Results -->
+                    <div class="results-container" id="panVerifyResults">
+                        <!-- Content rendered dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Tab Panel: PAN to GSTN -->
+                <div class="tab-panel" id="pan-to-gstn">
+                    <div class="panel-header">
+                        <h2>PAN to GSTN Finder</h2>
+                        <p>Identify all Goods and Services Tax Identification Numbers (GSTINs) registered under a
+                            specific Permanent Account Number (PAN).</p>
+                    </div>
+
+                    <div class="panel-card input-card">
+                        <form id="panToGstnForm" class="verification-form">
+                            <div class="form-group full-width">
+                                <label for="panToGstnInput">
+                                    Permanent Account Number (PAN) <span class="required">*</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-id-card input-icon"></i>
+                                    <input type="text" id="panToGstnInput" class="form-input text-uppercase"
+                                        placeholder="e.g. AAIFL8539R" maxlength="10" autocomplete="off" required>
+                                    <span class="validation-status-icon"><i class="fas"></i></span>
+                                </div>
+                                <span class="input-hint">10-digit alphanumeric PAN to search for associated
+                                    GSTINs</span>
+                                <span class="error-msg" id="panToGstnError">Please enter a valid PAN format.</span>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="panToGstnBtn" disabled>
+                                <span class="btn-text">Find GSTIN Records</span>
+                                <span class="btn-spinner"><i class="fas fa-circle-notch fa-spin"></i></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- PAN to GSTN Results -->
+                    <div class="results-container" id="panToGstnResults">
+                        <!-- Content rendered dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Tab Panel: GSTIN Details Finder -->
+                <div class="tab-panel" id="gstin-details">
+                    <div class="panel-header">
+                        <h2>GSTIN Details Finder</h2>
+                        <p>Retrieve comprehensive registration details, taxpayer status, legal name, trade name, and
+                            business address of a GSTIN directly from the registry.</p>
+                    </div>
+
+                    <div class="panel-card input-card">
+                        <form id="gstinDetailsForm" class="verification-form">
+                            <div class="form-group full-width">
+                                <label for="gstinInput">
+                                    GSTIN Number <span class="required">*</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-file-invoice-dollar input-icon"></i>
+                                    <input type="text" id="gstinInput" class="form-input text-uppercase"
+                                        placeholder="e.g. 08ABGPS2736A1ZO" maxlength="15" autocomplete="off" required>
+                                    <span class="validation-status-icon"><i class="fas"></i></span>
+                                </div>
+                                <span class="input-hint">15-digit Goods & Services Tax Identification Number</span>
+                                <span class="error-msg" id="gstinError">Please enter a valid GSTIN format (15
+                                    characters: State Code + PAN + Checksum).</span>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="gstinDetailsBtn" disabled>
+                                <span class="btn-text">Search GSTIN Registry</span>
+                                <span class="btn-spinner"><i class="fas fa-circle-notch fa-spin"></i></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- GSTIN Results -->
+                    <div class="results-container" id="gstinResults">
+                        <!-- Content rendered dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Tab Panel: Search History / Logs -->
+                <div class="tab-panel" id="search-history">
+                    <div class="panel-header">
+                        <div class="header-with-actions">
+                            <div>
+                                <h2>Verification Logs</h2>
+                                <p>Access locally stored logs of PAN and GSTIN verifications performed during this
+                                    session.</p>
+                            </div>
+                            <button class="danger-btn outline-btn" id="clearHistoryBtn">
+                                <i class="fas fa-trash-alt"></i> Clear All Logs
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Logs Table/Grid -->
+                    <div class="panel-card table-card">
+                        <div class="table-responsive">
+                            <table class="history-table" id="historyTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Verification Type</th>
+                                        <th>Lookup ID</th>
+                                        <th>Status Result</th>
+                                        <th>Summary Info</th>
+                                        <th class="actions-col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- History rows dynamically populated -->
+                                    <tr class="empty-row-placeholder">
+                                        <td colspan="6" class="text-center">
+                                            <div class="empty-state">
+                                                <i class="fas fa-folder-open"></i>
+                                                <p>No verification logs found. Run lookups above to populate history.
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 Jain Associates Tax Intelligence Platform. All rights reserved. Ref: Income Tax Portal
+                (Department of Revenue, Govt. of India) & TRACES guidelines.</p>
+            <p class="disclaimer">Disclaimer: This utility is for professional verification purposes. Access keys are
+                configuration-controlled.</p>
+        </footer>
+
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-sliders-h"></i> API Server Configuration</h3>
+                <button class="close-btn" id="closeSettingsBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">This client application fetches records by loading configuration
+                    credentials. You can view the loaded <code>.env</code> variables below or override them locally.</p>
+
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="settingsEndpoint">Domain Endpoint Url</label>
+                        <input type="url" id="settingsEndpoint" class="form-input"
+                            placeholder="https://endpoints.jainassociates.co.in" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settingsToken">Master Bearer Token</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="settingsToken" class="form-input"
+                                placeholder="Enter Authorization Token" required>
+                            <button type="button" class="eye-btn" id="toggleTokenVisibility">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button type="button" class="secondary-btn" id="resetSettingsBtn">Restore Default .env</button>
+                        <button type="submit" class="submit-btn shadow-btn">Save Configuration</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom App Logic Script -->
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>
