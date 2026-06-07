@@ -981,59 +981,229 @@ window.exportToPDF = function(btn, filename) {
     }
 
     const card = btn.closest('.result-card');
+    if (!card) return;
     
-    // Temporarily hide action buttons during PDF generation
-    const actionElements = card.querySelectorAll('button, .result-card-footer, .gstin-item-actions');
-    actionElements.forEach(el => el.style.display = 'none');
-
-    // FORCE INLINE STYLES FOR HTML2CANVAS BUG WORKAROUND
-    // html2canvas struggles with CSS variables, so we force strict black inline colors
-    const allElements = card.querySelectorAll('*');
-    const originalStyles = new Map();
+    // Create a deep clone of the card to manipulate styles off-screen
+    const clone = card.cloneNode(true);
     
-    allElements.forEach(el => {
-        originalStyles.set(el, {
-            color: el.style.color,
-            borderColor: el.style.borderColor,
-            background: el.style.background
-        });
+    // Remove action buttons, footers, and other interactive elements from the clone
+    const interactiveElements = clone.querySelectorAll('button, .result-card-footer, .gstin-item-actions');
+    interactiveElements.forEach(el => el.remove());
+    
+    // Create the container for the PDF report
+    const reportContainer = document.createElement('div');
+    reportContainer.className = 'pdf-report-wrapper';
+    reportContainer.style.background = '#ffffff';
+    reportContainer.style.padding = '35px';
+    reportContainer.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    reportContainer.style.color = '#1e293b';
+    
+    // Determine report details
+    const today = new Date();
+    const dateString = today.toLocaleString('en-IN', { 
+        dateStyle: 'long', 
+        timeStyle: 'medium' 
+    });
+    
+    let reportType = "Verification Report";
+    const cardHeader = clone.querySelector('h3');
+    if (cardHeader) {
+        const headerText = cardHeader.textContent;
+        if (headerText.includes('GSTIN')) reportType = "GSTIN Profile Verification";
+        else if (headerText.includes('PAN to GSTN')) reportType = "PAN to GSTN Mapping Report";
+        else if (headerText.includes('PAN')) reportType = "PAN Registry Lookup";
+    }
+    
+    // Add professional header to the report
+    const headerHtml = `
+        <div class="pdf-report-header" style="border-bottom: 2px solid #0e2942; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="color: #0e2942; font-family: 'Outfit', -apple-system, sans-serif; font-size: 1.6rem; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">JAIN & ASSOCIATES</h1>
+                <p style="color: #475569; font-size: 0.85rem; margin: 4px 0 0 0; font-weight: 600;">TAX INTELLIGENCE PLATFORM</p>
+            </div>
+            <div style="text-align: right;">
+                <h2 style="color: #df691a; font-family: 'Outfit', -apple-system, sans-serif; font-size: 1rem; font-weight: 700; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">${reportType}</h2>
+                <p style="color: #64748b; font-size: 0.75rem; margin: 4px 0 0 0;">Generated: ${dateString}</p>
+            </div>
+        </div>
+    `;
+    
+    // Apply styling to the cloned card structure
+    clone.style.boxShadow = 'none';
+    clone.style.border = '1px solid #cbd5e1';
+    clone.style.borderRadius = '8px';
+    clone.style.background = '#ffffff';
+    clone.style.margin = '0';
+    clone.style.padding = '0';
+    clone.style.width = '100%';
+    clone.style.animation = 'none';
+    
+    const cloneHeader = clone.querySelector('.result-card-header');
+    if (cloneHeader) {
+        cloneHeader.style.background = '#f8fafc';
+        cloneHeader.style.borderBottom = '1px solid #cbd5e1';
+        cloneHeader.style.padding = '16px 20px';
+        cloneHeader.style.display = 'flex';
+        cloneHeader.style.justifyContent = 'space-between';
+        cloneHeader.style.alignItems = 'center';
+    }
+    
+    const cloneH3 = clone.querySelector('.result-card-header h3');
+    if (cloneH3) {
+        cloneH3.style.color = '#0e2942';
+        cloneH3.style.margin = '0';
+        cloneH3.style.fontSize = '1.1rem';
+        cloneH3.style.fontWeight = '700';
+    }
+    
+    const cloneBody = clone.querySelector('.result-card-body');
+    if (cloneBody) {
+        cloneBody.style.padding = '24px 20px';
+    }
+    
+    // Format all badges in clone
+    const badges = clone.querySelectorAll('.badge');
+    badges.forEach(badge => {
+        badge.style.display = 'inline-block';
+        badge.style.padding = '4px 10px';
+        badge.style.borderRadius = '4px';
+        badge.style.fontSize = '0.75rem';
+        badge.style.fontWeight = '700';
+        badge.style.textTransform = 'uppercase';
         
-        // Force black text
-        el.style.setProperty('color', '#000000', 'important');
-        
-        // Force black borders on badges and cards
-        if (el.classList.contains('badge') || el.classList.contains('detail-item') || el.classList.contains('result-card-header')) {
-            el.style.setProperty('border-color', '#000000', 'important');
+        if (badge.classList.contains('success')) {
+            badge.style.background = '#ecfdf5';
+            badge.style.color = '#065f46';
+            badge.style.border = '1px solid #a7f3d0';
+        } else if (badge.classList.contains('danger')) {
+            badge.style.background = '#fef2f2';
+            badge.style.color = '#991b1b';
+            badge.style.border = '1px solid #fca5a5';
+        } else if (badge.classList.contains('warning')) {
+            badge.style.background = '#fffbeb';
+            badge.style.color = '#92400e';
+            badge.style.border = '1px solid #fde68a';
+        } else {
+            badge.style.background = '#eff6ff';
+            badge.style.color = '#1e40af';
+            badge.style.border = '1px solid #bfdbfe';
         }
     });
-
+    
+    // Style detail grids and items
+    const detailGrids = clone.querySelectorAll('.details-grid');
+    detailGrids.forEach(grid => {
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        grid.style.gap = '16px';
+    });
+    
+    const detailItems = clone.querySelectorAll('.detail-item');
+    detailItems.forEach(item => {
+        item.style.borderBottom = '1px solid #f1f5f9';
+        item.style.paddingBottom = '8px';
+        item.style.display = 'flex';
+        item.style.flexDirection = 'column';
+        item.style.gap = '2px';
+    });
+    
+    // Style labels and values
+    const lbls = clone.querySelectorAll('.lbl');
+    lbls.forEach(lbl => {
+        lbl.style.fontSize = '0.75rem';
+        lbl.style.fontWeight = '600';
+        lbl.style.color = '#64748b'; // Clear dark gray for labels
+        lbl.style.textTransform = 'uppercase';
+        lbl.style.letterSpacing = '0.5px';
+    });
+    
+    const vals = clone.querySelectorAll('.val');
+    vals.forEach(val => {
+        val.style.fontSize = '0.95rem';
+        val.style.fontWeight = '600';
+        val.style.color = '#0f172a'; // Clear dark blue-black for values
+        
+        if (val.classList.contains('highlight')) {
+            val.style.fontSize = '1.15rem';
+            val.style.color = '#0e2942'; // Dark Navy for brand names
+            val.style.fontWeight = '700';
+        }
+    });
+    
+    // Format GSTIN list cards if present
+    const gstinCards = clone.querySelectorAll('.gstin-item-card');
+    gstinCards.forEach(gCard => {
+        gCard.style.background = '#f8fafc';
+        gCard.style.border = '1px solid #cbd5e1';
+        gCard.style.borderRadius = '6px';
+        gCard.style.padding = '12px 16px';
+        gCard.style.marginBottom = '12px';
+        gCard.style.display = 'flex';
+        gCard.style.flexDirection = 'column';
+        gCard.style.gap = '6px';
+    });
+    
+    const gstinCodes = clone.querySelectorAll('.gstin-code');
+    gstinCodes.forEach(code => {
+        code.style.fontFamily = "'Outfit', sans-serif";
+        code.style.fontWeight = '700';
+        code.style.fontSize = '1rem';
+        code.style.color = '#0e2942';
+    });
+    
+    // Add logo icon style support in print (making sure FontAwesome icons have color)
+    const icons = clone.querySelectorAll('i');
+    icons.forEach(icon => {
+        icon.style.marginRight = '4px';
+    });
+    
+    // Build report layout
+    reportContainer.innerHTML = headerHtml;
+    reportContainer.appendChild(clone);
+    
+    const footerHtml = `
+        <div class="pdf-report-footer" style="border-top: 1px dashed #cbd5e1; margin-top: 35px; padding-top: 15px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 0.7rem; margin: 0; font-weight: 500;">
+                This is an official verification summary generated electronically via the Jain & Associates Tax Intelligence Platform.
+            </p>
+            <p style="color: #94a3b8; font-size: 0.65rem; margin: 4px 0 0 0;">
+                &copy; ${today.getFullYear()} Jain & Associates. All rights reserved.
+            </p>
+        </div>
+    `;
+    reportContainer.insertAdjacentHTML('beforeend', footerHtml);
+    
+    // Append the report to body off-screen to calculate layouts correctly
+    const printWrapper = document.createElement('div');
+    printWrapper.id = 'pdf-print-wrapper';
+    printWrapper.style.position = 'fixed';
+    printWrapper.style.left = '-9999px';
+    printWrapper.style.top = '0';
+    printWrapper.style.width = '7.5in'; // Match page width (8.5in minus margins)
+    printWrapper.appendChild(reportContainer);
+    document.body.appendChild(printWrapper);
+    
+    // Configure html2pdf options
     const opt = {
-        margin:       0.5,
+        margin:       [0.4, 0.4, 0.4, 0.4], // 0.4 in margins
         filename:     filename + '.pdf',
         image:        { type: 'jpeg', quality: 1.0 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        html2canvas:  { 
+            scale: 2.5, // High resolution
+            useCORS: true, 
+            logging: false,
+            backgroundColor: '#ffffff'
+        },
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
-
-    // Apply high-contrast CSS overrides just for PDF render
-    card.classList.add('pdf-export-mode');
-
-    // Wait for the browser to repaint the DOM before capturing
-    setTimeout(() => {
-        html2pdf().set(opt).from(card).save().then(() => {
-            // Restore original inline styles
-            allElements.forEach(el => {
-                const original = originalStyles.get(el);
-                if (original) {
-                    el.style.color = original.color;
-                    el.style.borderColor = original.borderColor;
-                    el.style.background = original.background;
-                }
-            });
-            
-            // Restore action buttons and remove PDF styling
-            actionElements.forEach(el => el.style.display = '');
-            card.classList.remove('pdf-export-mode');
-        });
-    }, 150);
+    
+    // Generate the PDF
+    html2pdf().set(opt).from(reportContainer).save().then(() => {
+        // Clean up from the DOM
+        printWrapper.remove();
+    }).catch(err => {
+        console.error("PDF generation failed:", err);
+        printWrapper.remove();
+        alert("Failed to generate PDF. Please try again.");
+    });
 };

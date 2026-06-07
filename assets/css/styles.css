@@ -1220,6 +1220,8 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.8rem;
     font-weight: 600;
     color: #78350f;
+}
+
 /* PDF Export High-Contrast Overrides */
 .pdf-export-mode {
     background-color: #ffffff !important;
