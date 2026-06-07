@@ -1221,3 +1221,33 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     color: #78350f;
 }
+
+/* PDF Export High-Contrast Overrides */
+.pdf-export-mode {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 20px !important;
+}
+.pdf-export-mode * {
+    color: #000000 !important;
+    text-shadow: none !important;
+}
+.pdf-export-mode .lbl {
+    font-weight: 600 !important;
+    color: #333333 !important;
+}
+.pdf-export-mode .val {
+    font-weight: 700 !important;
+}
+.pdf-export-mode .badge {
+    background: transparent !important;
+    border: 1.5px solid #000000 !important;
+    color: #000000 !important;
+}
+.pdf-export-mode .result-card-header {
+    background: #ffffff !important;
+    border-bottom: 2px solid #000000 !important;
+}
+.pdf-export-mode .detail-item {
+    border-bottom: 1px solid #e5e5e5 !important;
+}

@@ -994,8 +994,12 @@ window.exportToPDF = function(btn, filename) {
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
+    // Apply high-contrast CSS overrides just for PDF render
+    card.classList.add('pdf-export-mode');
+
     html2pdf().set(opt).from(card).save().then(() => {
-        // Restore action buttons
+        // Restore action buttons and remove PDF styling
         actionElements.forEach(el => el.style.display = '');
+        card.classList.remove('pdf-export-mode');
     });
 };
