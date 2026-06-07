@@ -1220,34 +1220,48 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.8rem;
     font-weight: 600;
     color: #78350f;
-}
-
 /* PDF Export High-Contrast Overrides */
 .pdf-export-mode {
     background-color: #ffffff !important;
     color: #000000 !important;
-    padding: 20px !important;
+    padding: 24px !important;
+    border: 2px solid #000000 !important;
+    border-top: 4px solid #000000 !important;
 }
 .pdf-export-mode * {
     color: #000000 !important;
     text-shadow: none !important;
+    opacity: 1 !important;
+    fill: #000000 !important;
 }
 .pdf-export-mode .lbl {
-    font-weight: 600 !important;
-    color: #333333 !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    text-transform: uppercase !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.5px !important;
 }
 .pdf-export-mode .val {
-    font-weight: 700 !important;
+    font-weight: 800 !important;
+    color: #000000 !important;
+    font-size: 1.1rem !important;
 }
 .pdf-export-mode .badge {
     background: transparent !important;
-    border: 1.5px solid #000000 !important;
+    border: 2px solid #000000 !important;
     color: #000000 !important;
+    font-weight: bold !important;
+}
+.pdf-export-mode h3 {
+    font-weight: 900 !important;
+    color: #000000 !important;
+    border-bottom: 2px solid #000000 !important;
+    padding-bottom: 10px !important;
 }
 .pdf-export-mode .result-card-header {
     background: #ffffff !important;
-    border-bottom: 2px solid #000000 !important;
+    border-bottom: none !important;
 }
 .pdf-export-mode .detail-item {
-    border-bottom: 1px solid #e5e5e5 !important;
+    border-bottom: 1px solid #cccccc !important;
 }

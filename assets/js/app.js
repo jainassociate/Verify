@@ -997,9 +997,12 @@ window.exportToPDF = function(btn, filename) {
     // Apply high-contrast CSS overrides just for PDF render
     card.classList.add('pdf-export-mode');
 
-    html2pdf().set(opt).from(card).save().then(() => {
-        // Restore action buttons and remove PDF styling
-        actionElements.forEach(el => el.style.display = '');
-        card.classList.remove('pdf-export-mode');
-    });
+    // Wait for the browser to repaint the DOM with the high-contrast CSS before capturing
+    setTimeout(() => {
+        html2pdf().set(opt).from(card).save().then(() => {
+            // Restore action buttons and remove PDF styling
+            actionElements.forEach(el => el.style.display = '');
+            card.classList.remove('pdf-export-mode');
+        });
+    }, 150);
 };
