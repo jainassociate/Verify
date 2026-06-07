@@ -986,20 +986,51 @@ window.exportToPDF = function(btn, filename) {
     const actionElements = card.querySelectorAll('button, .result-card-footer, .gstin-item-actions');
     actionElements.forEach(el => el.style.display = 'none');
 
+    // FORCE INLINE STYLES FOR HTML2CANVAS BUG WORKAROUND
+    // html2canvas struggles with CSS variables, so we force strict black inline colors
+    const allElements = card.querySelectorAll('*');
+    const originalStyles = new Map();
+    
+    allElements.forEach(el => {
+        originalStyles.set(el, {
+            color: el.style.color,
+            borderColor: el.style.borderColor,
+            background: el.style.background
+        });
+        
+        // Force black text
+        el.style.setProperty('color', '#000000', 'important');
+        
+        // Force black borders on badges and cards
+        if (el.classList.contains('badge') || el.classList.contains('detail-item') || el.classList.contains('result-card-header')) {
+            el.style.setProperty('border-color', '#000000', 'important');
+        }
+    });
+
     const opt = {
         margin:       0.5,
         filename:     filename + '.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
+        image:        { type: 'jpeg', quality: 1.0 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
     // Apply high-contrast CSS overrides just for PDF render
     card.classList.add('pdf-export-mode');
 
-    // Wait for the browser to repaint the DOM with the high-contrast CSS before capturing
+    // Wait for the browser to repaint the DOM before capturing
     setTimeout(() => {
         html2pdf().set(opt).from(card).save().then(() => {
+            // Restore original inline styles
+            allElements.forEach(el => {
+                const original = originalStyles.get(el);
+                if (original) {
+                    el.style.color = original.color;
+                    el.style.borderColor = original.borderColor;
+                    el.style.background = original.background;
+                }
+            });
+            
             // Restore action buttons and remove PDF styling
             actionElements.forEach(el => el.style.display = '');
             card.classList.remove('pdf-export-mode');
