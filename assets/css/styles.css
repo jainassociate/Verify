@@ -1044,27 +1044,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 12px rgba(15, 41, 66, 0.2);
 }
 
-/* Footer Section */
-.app-footer {
-    background-color: #f8fafc;
-    border-top: 1px solid var(--border-color);
-    padding: 20px 24px;
-    text-align: center;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.app-footer p {
-    margin: 0;
-}
-
-.app-footer .disclaimer {
-    color: #94a3b8;
-    font-style: italic;
-}
 
 /* Animations */
 @keyframes fadeIn {
