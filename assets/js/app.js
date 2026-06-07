@@ -67,15 +67,7 @@ const elements = {
     historyTableBody: document.getElementById('historyTableBody'),
     clearHistoryBtn: document.getElementById('clearHistoryBtn'),
     
-    // Settings Modal
-    settingsModal: document.getElementById('settingsModal'),
-    openSettingsBtn: document.getElementById('openSettingsBtn'),
-    closeSettingsBtn: document.getElementById('closeSettingsBtn'),
-    settingsForm: document.getElementById('settingsForm'),
-    settingsEndpoint: document.getElementById('settingsEndpoint'),
-    settingsToken: document.getElementById('settingsToken'),
-    resetSettingsBtn: document.getElementById('resetSettingsBtn'),
-    toggleTokenVisibility: document.getElementById('toggleTokenVisibility')
+    toggleTokenVisibility: null  // settings modal removed
 };
 
 // Initialize Application
@@ -124,10 +116,6 @@ async function loadEnvironment() {
     state.config.DOMAIN_ENDPOINT = savedEndpoint || ciConfig.DOMAIN_ENDPOINT || envVars.DOMAIN_ENDPOINT || state.config.DOMAIN_ENDPOINT;
     state.config.BEARER_TOKEN    = savedToken    || ciConfig.BEARER_TOKEN    || envVars.BEARER_TOKEN    || state.config.BEARER_TOKEN;
     state.envReady = !!(state.config.DOMAIN_ENDPOINT && state.config.BEARER_TOKEN);
-
-    // Populate settings modal (only shown locally)
-    if (elements.settingsEndpoint) elements.settingsEndpoint.value = state.config.DOMAIN_ENDPOINT;
-    if (elements.settingsToken)    elements.settingsToken.value    = state.config.BEARER_TOKEN;
 }
 
 // Simple parser for raw .env file text
@@ -287,50 +275,6 @@ function initializeEventListeners() {
         await performGstinDetailsFinder();
     });
 
-    // Modal Control
-    elements.openSettingsBtn.addEventListener('click', () => {
-        elements.settingsModal.classList.add('active');
-    });
-
-    elements.closeSettingsBtn.addEventListener('click', () => {
-        elements.settingsModal.classList.remove('active');
-    });
-
-    // Close modal if clicking overlay
-    elements.settingsModal.addEventListener('click', (e) => {
-        if (e.target === elements.settingsModal) {
-            elements.settingsModal.classList.remove('active');
-        }
-    });
-
-    // Settings Actions
-    elements.toggleTokenVisibility.addEventListener('click', () => {
-        const type = elements.settingsToken.type === 'password' ? 'text' : 'password';
-        elements.settingsToken.type = type;
-        const icon = elements.toggleTokenVisibility.querySelector('i');
-        icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
-    });
-
-    elements.settingsForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        localStorage.setItem('cfg_endpoint', elements.settingsEndpoint.value.trim());
-        localStorage.setItem('cfg_token', elements.settingsToken.value.trim());
-        
-        elements.settingsModal.classList.remove('active');
-        loadEnvironment().then(() => {
-            checkApiStatus();
-        });
-    });
-
-    elements.resetSettingsBtn.addEventListener('click', () => {
-        localStorage.removeItem('cfg_endpoint');
-        localStorage.removeItem('cfg_token');
-        
-        elements.settingsModal.classList.remove('active');
-        loadEnvironment().then(() => {
-            checkApiStatus();
-        });
-    });
 
     // Clear History Log
     elements.clearHistoryBtn.addEventListener('click', () => {
