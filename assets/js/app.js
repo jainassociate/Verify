@@ -3,10 +3,17 @@
  */
 
 // ── Environment Detection ─────────────────────────────────────────────────────
-// IS_LOCAL: true when running on localhost / local IP (dev mode)
-// IS_CF:    true when running on Cloudflare Pages (production)
-const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-const IS_CF    = !IS_LOCAL;
+// IS_LOCAL       → localhost / 127.0.0.1          (dev mode — reads .env directly)
+// IS_GITHUB      → *.github.io                    (static host — reads .env directly)
+// IS_CF          → *.pages.dev or custom CF domain (uses server-side /api/* proxy)
+//
+// GitHub Pages is purely static: no server functions, no env vars, no _headers.
+// Cloudflare Pages runs functions/api/[[route]].js which injects the Bearer token.
+const hostname     = window.location.hostname;
+const IS_LOCAL     = hostname === 'localhost' || hostname === '127.0.0.1';
+const IS_GITHUB    = hostname.endsWith('.github.io');
+const IS_CF        = !IS_LOCAL && !IS_GITHUB;   // Cloudflare Pages only
+const NEEDS_PROXY  = IS_CF;                      // only CF has the server-side proxy
 
 // Application State
 const state = {
@@ -82,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadEnvironment() {
     setSystemStatus('connecting', 'Loading Config...');
 
-    if (IS_CF) {
+    if (NEEDS_PROXY) {
         // ── Cloudflare Pages (Production) ────────────────────────────────
         // Credentials live in CF env vars (server-side only).
         // The /api/* proxy function will enforce their presence.
@@ -94,7 +101,8 @@ async function loadEnvironment() {
         return;
     }
 
-    // ── Local Development ─────────────────────────────────────────────────
+    // ── Local Dev / GitHub Pages ──────────────────────────────────────────
+    // Both are static hosts that call the upstream API directly using .env credentials.
     let envVars = {};
     try {
         const res = await fetch('.env');
@@ -146,17 +154,17 @@ async function checkApiStatus() {
         const timeoutId  = setTimeout(() => controller.abort(), 8000);
 
         // On CF: hit our own proxy (/api/verify-pan)
-        // On local: hit the upstream directly
-        const pingUrl = IS_CF
+        // On local/GitHub: hit the upstream directly
+        const pingUrl = NEEDS_PROXY
             ? '/api/verify-pan?pan=TESTPING'
             : `${state.config.DOMAIN_ENDPOINT}/api/verify-pan?pan=TESTPING`;
 
-        const headers = IS_CF
+        const headers = NEEDS_PROXY
             ? {}   // CF Function injects Authorization server-side
             : { 'Authorization': `Bearer ${state.config.BEARER_TOKEN}` };
 
-        // Local: don't even try if config is missing
-        if (!IS_CF && !state.envReady) {
+        // Direct mode: don't even try if config is missing
+        if (!NEEDS_PROXY && !state.envReady) {
             setSystemStatus('offline', 'Config Missing');
             showConfigBanner();
             return;
@@ -200,7 +208,7 @@ function showConfigBanner() {
             <i class="fas fa-exclamation-triangle"></i>
             <div>
                 <strong>API Environment Variables Not Configured</strong>
-                <span>${IS_CF
+                <span>${NEEDS_PROXY
                     ? 'Go to <b>Cloudflare Pages → Settings → Environment Variables</b> and add <code>BEARER_TOKEN</code> and <code>DOMAIN_ENDPOINT</code>, then redeploy.'
                     : 'Add <code>BEARER_TOKEN</code> and <code>DOMAIN_ENDPOINT</code> to your <code>.env</code> file or use the ⚙ Settings icon above.'
                 }</span>
