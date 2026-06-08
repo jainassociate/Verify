@@ -21,8 +21,6 @@ const state = {
         // Fallback defaults — used when .env cannot be loaded (e.g. GitHub Pages without .env in repo)
         // Priority chain: localStorage override > .env file > these defaults
         // On Cloudflare Pages, NEEDS_PROXY=true so these values are never used (CF Function handles auth)
-        DOMAIN_ENDPOINT: 'https://endpoints.jainassociates.co.in',
-        BEARER_TOKEN: '221120032903200005022000'
     },
     envReady: false,   // true once credentials are confirmed available
     activeTab: 'pan-verify',
