@@ -765,7 +765,7 @@ function renderGstinDetailsResults(data) {
                         <span class="val highlight text-uppercase" style="font-size:1.2rem; color:var(--primary-navy);">${escapeHtml(data.tradename || 'N/A')}</span>
                     </div>
                     <div class="detail-item" style="grid-column: 1 / -1;">
-                        <span class="lbl">Legal Name of Taxpayer (Director/Owner)</span>
+                        <span class="lbl">Legal Name of Taxpayer</span>
                         <span class="val text-uppercase">${escapeHtml(data.name)}</span>
                     </div>
                     <div class="detail-item">
