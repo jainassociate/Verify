@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b2a49">
+<title>JAVerification | Jain and Associates</title>
+<meta name="description" content="JAVerification by Jain and Associates — PAN, GSTIN and GST return verification.">
+<style>
+:root{
+  --navy:#0b1a31;
+  --navy2:#123a5d;
+  --blue:#2563eb;
+  --blue2:#1d4ed8;
+  --orange:#f97316;
+  --green:#10b981;
+  --red:#dc2626;
+  --amber:#d97706;
+  --bg:#f3f7fb;
+  --card:#fff;
+  --text:#122033;
+  --muted:#64748b;
+  --line:#dce5ef;
+  --soft:#f8fafc;
+  --shadow:0 8px 24px rgba(15,23,42,.07);
+  --radius:14px;
+  --sidebar:255px;
+  --top:76px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer;-webkit-appearance:none;appearance:none}
+button:disabled{cursor:not-allowed}
+.app{min-height:100dvh}
+
+/* HEADER */
+.topbar{
+  position:fixed;inset:0 0 auto 0;height:var(--top);z-index:100;
+  display:flex;align-items:center;
+  background:linear-gradient(90deg,#0c2946,#123b5e);
+  border-bottom:3px solid var(--orange);
+  color:#fff;padding:0 22px;
+}
+.brand-top{display:flex;align-items:center;gap:13px;min-width:0}
+.brand-mark{
+  width:39px;height:39px;border:2px solid var(--orange);border-radius:50%;
+  display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px;
+  background:rgba(255,255,255,.04);flex:none;
+}
+.brand-top strong{font-size:18px;letter-spacing:-.2px;white-space:nowrap}
+.system-status{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  border:1px solid rgba(255,255,255,.15);border-radius:999px;
+  background:rgba(255,255,255,.06);padding:7px 13px;color:#dbeafe;font-size:10px;
+}
+.system-status .dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}
+.system-status.ok .dot{background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.system-status.bad .dot{background:#ef4444}
+.system-status.busy .dot{background:#f59e0b}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;z-index:90;left:0;top:var(--top);bottom:0;width:var(--sidebar);
+  background:var(--navy);color:#fff;display:flex;flex-direction:column;
+  overflow:hidden;border-right:1px solid rgba(255,255,255,.05);
+}
+.nav{padding:18px 14px;overflow:auto;min-height:0;flex:1}
+.nav-label{
+  padding:7px 13px;color:#7187a4;font-size:9px;font-weight:850;
+  text-transform:uppercase;letter-spacing:.12em;
+}
+.nav button{
+  width:100%;border:0;background:transparent;color:#c9d5e5;
+  text-align:left;border-radius:10px;padding:11px 13px;margin:2px 0;
+  display:flex;align-items:center;gap:10px;font-size:12px;font-weight:750;
+  transition:background .16s ease,transform .12s ease,color .16s ease;
+}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav button.active{
+  color:#fff;background:rgba(249,115,22,.15);
+  box-shadow:inset 3px 0 var(--orange);
+}
+.nav-icon{width:21px;display:inline-grid;place-items:center;color:#8fa5c0;font-size:15px;flex:none}
+.nav button.active .nav-icon{color:var(--orange)}
+.nav-main{min-width:0}
+.nav-main b{display:block;font-size:12px}
+.nav-main small{display:block;color:#7187a4;font-size:9px;font-weight:500;margin-top:2px}
+.nav button.active .nav-main small{color:#c1cad8}
+.sidebar-footer{
+  flex:none;padding:15px 20px 18px;color:#7187a4;font-size:9px;line-height:1.55;
+  border-top:1px solid rgba(255,255,255,.05)
+}
+
+/* CONTENT */
+.main{margin-left:var(--sidebar);padding-top:var(--top);min-height:100dvh;min-width:0}
+.content{width:100%;max-width:1500px;margin:0 auto;padding:28px 28px 18px}
+.mobile-menu{
+  display:none;border:0;width:38px;height:38px;border-radius:10px;
+  background:rgba(255,255,255,.1);color:#fff;font-size:20px;margin-right:10px;
+}
+.page-head{margin-bottom:20px}
+.page-head h1{margin:0;font-size:26px;line-height:1.15;letter-spacing:-.5px}
+.page-head h1::after{
+  content:"";display:block;width:55px;height:3px;background:var(--orange);margin-top:9px
+}
+.page-head p{margin:8px 0 0;color:#385675;font-size:13px;line-height:1.5}
+.view{display:none}
+.view.active{display:block}
+.form-card,.result-card,.history-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px;min-width:0;
+}
+.form-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.form-head h2{margin:0;font-size:15px}
+.form-head p{margin:4px 0 0;color:var(--muted);font-size:10px}
+.badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:5px 9px;border-radius:999px;font-size:9px;font-weight:850;white-space:nowrap
+}
+.badge.blue{background:#dbeafe;color:#1d4ed8}
+.badge.green{background:#dcfce7;color:#166534}
+.badge.red{background:#fee2e2;color:#991b1b}
+.badge.amber{background:#fef3c7;color:#92400e}
+.badge.gray{background:#eef2f7;color:#475569}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.field{min-width:0}
+.field label{display:block;margin:0 0 7px;font-size:11px;font-weight:800;color:#22344b}
+.field label .required{color:var(--red)}
+.input-wrap{position:relative}
+.input-wrap .field-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:#7a91ab;font-size:14px;pointer-events:none
+}
+.input-wrap input,.input-wrap select,input,select{
+  width:100%;height:42px;border:1px solid #d5dfeb;border-radius:10px;
+  background:#fff;color:var(--text);outline:0;padding:0 12px;font-size:12px;
+  transition:border-color .16s,box-shadow .16s,background .16s
+}
+.input-wrap input{padding-left:38px}
+input:focus,select:focus{
+  border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)
+}
+input.invalid{border-color:#ef4444;background:#fffafa;box-shadow:0 0 0 3px rgba(239,68,68,.07)}
+input.valid{border-color:#10b981;background:#fbfffd}
+.help{font-size:9px;color:#71839a;margin-top:6px;line-height:1.4}
+.validation{
+  min-height:18px;margin-top:5px;display:flex;align-items:center;gap:6px;
+  font-size:9px;font-weight:800
+}
+.validation .v-dot{width:6px;height:6px;border-radius:50%;background:#94a3b8;flex:none}
+.validation.pending{color:#64748b}
+.validation.valid{color:#059669}.validation.valid .v-dot{background:#10b981}
+.validation.invalid{color:#dc2626}.validation.invalid .v-dot{background:#ef4444}
+.form-actions{margin-top:16px;display:flex;gap:8px}
+.btn{
+  min-height:39px;border-radius:10px;border:1px solid transparent;padding:9px 15px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-size:11px;font-weight:850;line-height:1.2;
+  transition:transform .12s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease;
+  position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.05)
+}
+.btn::after{
+  content:"";position:absolute;inset:0;background:rgba(255,255,255,.2);
+  opacity:0;transform:scale(.82);border-radius:inherit;pointer-events:none
+}
+.btn:active{transform:translateY(1px) scale(.975)}
+.btn:active::after{opacity:1;transform:scale(1);transition:.12s}
+.btn:focus-visible{outline:2px solid rgba(37,99,235,.35);outline-offset:2px}
+.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.primary:hover{background:var(--blue2);border-color:var(--blue2);box-shadow:0 5px 12px rgba(37,99,235,.17)}
+.btn.light{background:#eef2f7;color:#334155;border-color:#d7e0eb}
+.btn.light:hover{background:#e5ebf3}
+.btn.green{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+.btn.danger{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.btn:disabled{opacity:.55}
+.spinner{
+  width:13px;height:13px;border:2px solid rgba(255,255,255,.38);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESULTS */
+.result-card{margin-top:16px}
+.result-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  padding-bottom:13px;border-bottom:1px solid var(--line);margin-bottom:14px
+}
+.result-head h2{margin:0;font-size:17px}
+.result-head p{margin:4px 0 0;color:var(--muted);font-size:10px}
+.result-actions{display:flex;gap:7px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:12px}
+.kpi{border:1px solid var(--line);border-radius:10px;background:#fafcfe;padding:11px;min-width:0}
+.kpi small{display:block;color:var(--muted);font-size:8px}
+.kpi strong{display:block;margin-top:4px;font-size:11px;word-break:break-word}
+.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.info{border:1px solid var(--line);border-radius:9px;padding:10px;min-width:0}
+.info small{display:block;color:var(--muted);font-size:8px;margin-bottom:4px}
+.info strong{font-size:10px;word-break:break-word}
+.address{
+  margin-top:10px;border:1px solid var(--line);border-radius:10px;
+  background:#f8fafc;padding:11px;font-size:10px;line-height:1.55
+}
+.notice{padding:10px 12px;border-radius:9px;font-size:10px;line-height:1.5;margin-bottom:12px}
+.notice.success{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+.notice.info{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe}
+.notice.warn{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.notice.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.api-error{display:grid;gap:10px}
+.api-error-title{font-weight:800;font-size:12px}
+.api-error-message{font-size:11px;line-height:1.55}
+.api-error-meta{display:flex;flex-wrap:wrap;gap:7px}
+.api-error-meta span{display:inline-flex;align-items:center;padding:4px 7px;border:1px solid #fecaca;border-radius:999px;background:#fff;font-size:9px;font-weight:700;color:#7f1d1d}
+.api-error-help{font-size:10px;color:#7f1d1d}
+.api-error-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.gstin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.gst-card{border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}
+.gst-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.gstin-value{font-size:14px;font-weight:900;letter-spacing:.2px;word-break:break-all}
+.legal{font-size:10px;font-weight:700;margin-top:3px}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
+.mini{border:1px solid var(--line);border-radius:8px;padding:8px;min-width:0}
+.mini small{display:block;color:var(--muted);font-size:8px}
+.mini b{display:block;font-size:9px;margin-top:2px;word-break:break-word}
+.card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:9px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#f8fafc;color:#475569;font-size:8px}
+tr:last-child td{border-bottom:0}
+.empty{padding:35px 15px;text-align:center;color:var(--muted);font-size:10px;border:1px dashed #cbd5e1;border-radius:10px}
+.copy-btn{
+  min-height:28px;padding:5px 8px;border-radius:7px;border:1px solid var(--line);
+  background:#fff;color:#475569;font-size:9px;font-weight:800
+}
+.copy-btn:hover{background:#f8fafc;border-color:#bfdbfe;color:#1d4ed8}
+
+/* HISTORY */
+.history-row{
+  display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)
+}
+.history-row:last-child{border-bottom:0}
+.history-icon{
+  width:34px;height:34px;border-radius:9px;background:#eff6ff;color:#2563eb;
+  display:grid;place-items:center;font-weight:900;flex:none
+}
+.history-main{flex:1;min-width:0}
+.history-main b{display:block;font-size:11px}
+.history-main small{display:block;color:var(--muted);font-size:9px;margin-top:2px;word-break:break-word}
+.history-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}
+
+/* API MODAL */
+.modal{
+  position:fixed;inset:0;z-index:200;background:rgba(2,8,23,.5);
+  display:none;align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(2px)
+}
+.modal.open{display:flex}
+.modal-card{
+  width:min(500px,100%);max-height:calc(100dvh - 32px);overflow:auto;
+  background:#fff;border-radius:16px;border:1px solid var(--line);
+  box-shadow:0 25px 70px rgba(2,8,23,.28)
+}
+.modal-head{
+  padding:16px 18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between
+}
+.modal-head h3{margin:0;font-size:15px}.modal-head p{margin:3px 0 0;color:var(--muted);font-size:9px}
+.close-btn{
+  width:32px;height:32px;border:0;border-radius:8px;background:#eef2f7;color:#334155;font-size:18px
+}
+.modal-body{padding:17px}
+.api-state{
+  display:flex;align-items:center;gap:10px;border:1px solid var(--line);
+  background:#fafcfe;border-radius:10px;padding:12px;margin-bottom:12px
+}
+.api-state .big-dot{width:10px;height:10px;border-radius:50%;background:#94a3b8;flex:none}
+.api-state.ok .big-dot{background:#10b981}
+.api-state.bad .big-dot{background:#ef4444}
+.api-state.busy .big-dot{background:#f59e0b}
+.api-state strong{font-size:12px}.api-state small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.api-details{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.api-detail{border:1px solid var(--line);border-radius:9px;padding:10px}
+.api-detail small{display:block;color:var(--muted);font-size:8px}
+.api-detail b{display:block;font-size:10px;margin-top:3px;word-break:break-word}
+
+/* TOAST / FOOTER */
+.toast{
+  position:fixed;right:18px;bottom:18px;z-index:300;
+  background:#111827;color:#fff;padding:10px 13px;border-radius:9px;
+  font-size:10px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none
+}
+.toast.show{opacity:1;transform:none}
+.footer{text-align:center;color:#7890a8;font-size:9px;padding:18px 0 10px}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  :root{--sidebar:235px}
+  .content{padding:23px 20px 16px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:850px){
+  :root{--sidebar:270px}
+  .mobile-menu{display:block}
+  .sidebar{top:var(--top);transform:translateX(-105%);box-shadow:15px 0 45px rgba(2,8,23,.28)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:block}
+  .main{margin-left:0}
+  .content{padding:20px 16px}
+  .form-grid,.gstin-grid{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  :root{--top:64px}
+  .topbar{padding:0 12px}
+  .brand-mark{width:35px;height:35px;font-size:13px}
+  .brand-top strong{font-size:15px}
+  .system-status{padding:6px 9px;font-size:9px}
+  .content{padding:16px 12px}
+  .page-head h1{font-size:22px}
+  .page-head p{font-size:11px}
+  .form-card,.result-card,.history-card{padding:14px;border-radius:12px}
+  .form-grid{gap:12px}
+  .info-grid,.kpis,.api-details{grid-template-columns:1fr}
+  .form-actions,.card-actions{width:100%}
+  .form-actions .btn,.card-actions .btn{width:100%}
+  .result-head{flex-direction:column}
+  .result-actions{width:100%}
+  .result-actions .btn{flex:1}
+  .table-wrap{width:100%}
+}
+@media(max-width:390px){
+  .brand-top strong{font-size:14px}
+  .system-status span:last-child{display:none}
+  .page-head h1{font-size:20px}
+  .nav button{padding:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* PRINT / PDF */
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff}
+  .topbar,.sidebar,.mobile-menu,.modal,.toast,.footer,.page-head,.result-actions,.nav{display:none!important}
+  .main{margin:0;padding:0;width:100%}
+  .content{max-width:none;padding:0}
+  .view{display:none!important}
+  .view.active{display:block!important}
+  .form-card{display:none!important}
+  .result-card{display:block!important;border:0;box-shadow:none;margin:0;padding:0}
+  .result-head{border-bottom:1px solid #ddd}
+}
+</style>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'nonce-JA-20260922-7f6c2d9a4b8e1c53'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; media-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests">
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Open menu" data-action="toggle-sidebar">☰</button>
+  <div class="brand-top">
+    <div class="brand-mark">JA</div>
+    <strong>Jain and Associates</strong>
+  </div>
+  <button class="system-status neutral" id="systemStatus" type="button" data-action="open-api-modal" aria-label="Open system status">
+    <span class="dot"></span><span id="systemStatusText">Checking...</span>
+  </button>
+</header>
+
+<aside class="sidebar" id="sidebar">
+  <nav class="nav" aria-label="Verification navigation">
+    <div class="nav-label">Verification</div>
+
+    <button class="active" data-view="panView" type="button" data-view="panView">
+      <span class="nav-icon">▣</span>
+      <span class="nav-main"><b>PAN Verification</b><small>Verify Cardholders &amp; DOB</small></span>
+    </button>
+
+    <button data-view="gstSearchView" type="button" data-view="gstSearchView">
+      <span class="nav-icon">⌁</span>
+      <span class="nav-main"><b>PAN to GSTIN Finder</b><small>Map PAN to Registrations</small></span>
+    </button>
+
+    <button data-view="gstinView" type="button" data-view="gstinView">
+      <span class="nav-icon">▣</span>
+      <span class="nav-main"><b>GSTIN Details Finder</b><small>Fetch Business Registry</small></span>
+    </button>
+
+    <button data-view="returnsView" type="button" data-view="returnsView">
+      <span class="nav-icon">▤</span>
+      <span class="nav-main"><b>GST Return Status</b><small>GSTR-1 &amp; GSTR-3B</small></span>
+    </button>
+
+    <div class="nav-label">System</div>
+
+    <button data-view="historyView" type="button" data-view="historyView">
+      <span class="nav-icon">◷</span>
+      <span class="nav-main"><b>Verification Logs</b><small>History &amp; Local Reports</small></span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    Tax, Compliance &amp; Business Automation<br>
+    Jain &amp; Associates
+  </div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay" data-action="close-sidebar" style="display:none;position:fixed;inset:var(--top) 0 0;background:rgba(2,8,23,.45);z-index:80"></div>
+
+<main class="main">
+<div class="content">
+
+<!-- PAN -->
+<section class="view active" id="panView">
+  <div class="page-head">
+    <h1>PAN Verification Service</h1>
+    <p>Verify a Permanent Account Number (PAN) and match it with the taxpayer's registered Date of Birth (DOB).</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-head">
+      <div><h2>Verify PAN</h2><p>Verify PAN status against date of birth.</p></div>
+      <span class="badge blue">PAN</span>
+    </div>
+
+    <form id="panForm" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="pan">Permanent Account Number (PAN) <span class="required">*</span></label>
+          <div class="input-wrap">
+            <span class="field-icon">▣</span>
+            <input id="pan" maxlength="10" autocomplete="off" inputmode="text" placeholder="E.G. ABCPR1234K" aria-describedby="panHelp panState">
+          </div>
+          <div class="help" id="panHelp">10-digit alphanumeric code: 5 letters, 4 numbers, 1 letter</div>
+          <div class="validation pending" id="panState" aria-live="polite"><span class="v-dot"></span><span>Kindly enter PAN</span></div>
+        </div>
+
+        <div class="field">
+          <label for="dob">Date of Birth (DOB) <span class="required">*</span></label>
+          <div class="input-wrap">
+            <span class="field-icon">▦</span>
+            <input id="dob" maxlength="10" autocomplete="off" inputmode="numeric" placeholder="DD/MM/YYYY" aria-describedby="dobHelp dobState">
+          </div>
+          <div class="help" id="dobHelp">Enter date in DD/MM/YYYY format.</div>
+          <div class="validation pending" id="dobState" aria-live="polite"><span class="v-dot"></span><span>Kindly enter Date of Birth</span></div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" id="panBtn" type="submit" disabled>Verify PAN</button>
+        <button class="btn light" type="button" data-clear-form="panForm">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="panInline"></div>
+</section>
+
+<!-- PAN TO GSTIN -->
+<section class="view" id="gstSearchView">
+  <div class="page-head">
+    <h1>PAN to GSTIN Finder</h1>
+    <p>Identify all Goods and Services Tax Identification Numbers (GSTINs) registered under a specific PAN.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-head">
+      <div><h2>Search GST Registrations</h2><p>Enter a valid PAN to retrieve all matching GST registrations.</p></div>
+      <span class="badge green">GST Search</span>
+    </div>
+
+    <form id="searchForm" novalidate>
+      <div class="field">
+        <label for="searchPan">Permanent Account Number (PAN) <span class="required">*</span></label>
+        <div class="input-wrap">
+          <span class="field-icon">▣</span>
+          <input id="searchPan" maxlength="10" autocomplete="off" inputmode="text" placeholder="E.G. AAIFL8539R" aria-describedby="searchPanHelp searchPanState">
+        </div>
+        <div class="help" id="searchPanHelp">10-digit alphanumeric PAN to search associated GSTINs.</div>
+        <div class="validation pending" id="searchPanState" aria-live="polite"><span class="v-dot"></span><span>Kindly enter PAN</span></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" id="searchBtn" type="submit" disabled>Find GSTIN Records</button>
+        <button class="btn light" type="button" data-clear-form="searchForm">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="searchInline"></div>
+</section>
+
+<!-- GSTIN -->
+<section class="view" id="gstinView">
+  <div class="page-head">
+    <h1>GSTIN Details Finder</h1>
+    <p>Retrieve comprehensive registration details, taxpayer status, legal name, trade name, and business address.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-head">
+      <div><h2>Verify GSTIN</h2><p>Enter GSTIN. The configured API Unique ID is applied automatically.</p></div>
+      <span class="badge green">GSTIN</span>
+    </div>
+
+    <form id="gstinForm" novalidate>
+      <div class="field">
+        <label for="gstin">GSTIN Number <span class="required">*</span></label>
+        <div class="input-wrap">
+          <span class="field-icon">▣</span>
+          <input id="gstin" maxlength="15" autocomplete="off" inputmode="text" placeholder="E.G. 08ABGPS2736A1ZO" aria-describedby="gstinHelp gstinState">
+        </div>
+        <div class="help" id="gstinHelp">15-digit Goods &amp; Services Tax Identification Number.</div>
+        <div class="validation pending" id="gstinState" aria-live="polite"><span class="v-dot"></span><span>Kindly enter GSTIN</span></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" id="gstinBtn" type="submit" disabled>Search GSTIN Registry</button>
+        <button class="btn light" type="button" data-clear-form="gstinForm">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="gstinInline"></div>
+</section>
+
+<!-- RETURNS -->
+<section class="view" id="returnsView">
+  <div class="page-head">
+    <h1>GST Return Status</h1>
+    <p>Check GSTR-1 and GSTR-3B filing records for a GSTIN and financial year.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-head">
+      <div><h2>Check GST Returns</h2><p>Retrieve available filing records for the selected financial year.</p></div>
+      <span class="badge amber">Returns</span>
+    </div>
+
+    <form id="returnsForm" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="returnGstin">GSTIN Number <span class="required">*</span></label>
+          <div class="input-wrap">
+            <span class="field-icon">▣</span>
+            <input id="returnGstin" maxlength="15" autocomplete="off" inputmode="text" placeholder="E.G. 03FBGPS2636A2ZZ" aria-describedby="returnGstinState">
+          </div>
+          <div class="validation pending" id="returnGstinState" aria-live="polite"><span class="v-dot"></span><span>Kindly enter GSTIN</span></div>
+        </div>
+
+        <div class="field">
+          <label for="fy">Financial Year <span class="required">*</span></label>
+          <select id="fy">
+            <option value="2026-27">2026-27</option>
+            <option value="2025-26">2025-26</option>
+            <option value="2024-25">2024-25</option>
+            <option value="2023-24">2023-24</option>
+            <option value="2022-23">2022-23</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn primary" id="returnsBtn" type="submit" disabled>Check Returns</button>
+        <button class="btn light" type="button" data-clear-form="returnsForm">Clear</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="returnsInline"></div>
+</section>
+
+<!-- HISTORY -->
+<section class="view" id="historyView">
+  <div class="page-head">
+    <h1>Verification Logs</h1>
+    <p>Recent verification activity stored locally in this browser.</p>
+  </div>
+
+  <div class="history-card">
+    <div class="history-toolbar">
+      <button class="btn light" type="button" data-action="export-history">Export CSV</button>
+      <button class="btn danger" type="button" data-action="clear-history">Clear History</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+</section>
+
+<div class="footer">JAVerification · Jain &amp; Associates · Tax, Compliance &amp; Business Automation</div>
+</div>
+</main>
+</div>
+
+<!-- API STATUS -->
+<div class="modal" id="apiModal" role="dialog" aria-modal="true" aria-labelledby="apiTitle" data-action="modal-backdrop">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><h3 id="apiTitle">System Status</h3><p>JAVerification API gateway diagnostics</p></div>
+      <button class="close-btn" type="button" data-action="close-api-modal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="api-state busy" id="apiState">
+        <span class="big-dot"></span>
+        <div><strong id="apiStateTitle">API Status</strong><small id="apiStateText">Not checked yet</small></div>
+      </div>
+      <div class="api-details">
+        <div class="api-detail"><small>HTTP Status</small><b id="apiHttp">—</b></div>
+        <div class="api-detail"><small>Response Time</small><b id="apiMs">—</b></div>
+        <div class="api-detail"><small>Service</small><b id="apiService">—</b></div>
+        <div class="api-detail"><small>Last Checked</small><b id="apiChecked">—</b></div>
+      </div>
+      <div id="apiError" style="margin-top:12px"></div>
+      <div class="form-actions">
+        <button class="btn primary" type="button" data-action="check-health">Retry</button>
+        <button class="btn light" type="button" data-action="close-api-modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script nonce="JA-20260922-7f6c2d9a4b8e1c53">
+/*
+  JAVerification — production frontend
+  ------------------------------------
+  No API base URL, API key, or Unique ID is stored in this frontend.
+
+  The HTML is intended to be served by the same Cloudflare Worker that
+  exposes the /api/* routes. The Worker keeps API_BASE, API_KEY and
+  UNIQUE_ID in its environment/secrets and injects UNIQUE_ID server-side
+  when the upstream GSTIN endpoint requires it.
+*/
+
+const $ = id => document.getElementById(id);
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+const GSTIN_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+
+let currentView = "panView";
+let latestResult = null;
+let lastHealth = null;
+
+const titles = {
+  panView: "PAN Verification",
+  gstSearchView: "PAN to GSTIN Finder",
+  gstinView: "GSTIN Details Finder",
+  returnsView: "GST Return Status",
+  historyView: "Verification Logs"
+};
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[ch]));
+}
+
+function toast(message){
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
+}
+
+function toggleSidebar(){
+  $("sidebar").classList.toggle("open");
+  $("sidebarOverlay").style.display = $("sidebar").classList.contains("open") ? "block" : "none";
+}
+function closeSidebar(){
+  $("sidebar").classList.remove("open");
+  $("sidebarOverlay").style.display = "none";
+}
+
+function showView(id, button){
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  const view = $(id);
+  if(!view) return;
+  view.classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+  const nav = button || document.querySelector(`.nav button[data-view="${id}"]`);
+  if(nav) nav.classList.add("active");
+
+  currentView = id;
+  document.title = `${titles[id] || "JAVerification"} | Jain and Associates`;
+
+  closeSidebar();
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if(id === "historyView") renderHistory();
+}
+
+function setValidation(id, state, message){
+  const el = $(id);
+  if(!el) return;
+  el.className = `validation ${state}`;
+  const text = el.querySelector("span:last-child");
+  if(text) text.textContent = message;
+}
+
+function updateInputState(input, state){
+  input.classList.remove("valid","invalid");
+  if(state === "valid") input.classList.add("valid");
+  if(state === "invalid") input.classList.add("invalid");
+}
+
+function validatePan(id, stateId){
+  const input = $(id);
+  const value = input.value.trim().toUpperCase();
+  input.value = value;
+
+  if(!value){
+    updateInputState(input,"pending");
+    setValidation(stateId,"pending","Kindly enter PAN");
+    return false;
+  }
+
+  if(PAN_REGEX.test(value)){
+    updateInputState(input,"valid");
+    setValidation(stateId,"valid","Valid PAN");
+    return true;
+  }
+
+  updateInputState(input,"invalid");
+  setValidation(
+    stateId,
+    "invalid",
+    value.length < 10 ? "Invalid — 10 characters required" : "Invalid PAN format"
+  );
+  return false;
+}
+
+function validateGstin(id, stateId){
+  const input = $(id);
+  const value = input.value.trim().toUpperCase();
+  input.value = value;
+
+  if(!value){
+    updateInputState(input,"pending");
+    setValidation(stateId,"pending","Kindly enter GSTIN");
+    return false;
+  }
+
+  if(GSTIN_REGEX.test(value)){
+    updateInputState(input,"valid");
+    setValidation(stateId,"valid","Valid GSTIN");
+    return true;
+  }
+
+  updateInputState(input,"invalid");
+  setValidation(
+    stateId,
+    "invalid",
+    value.length < 15 ? "Invalid — 15 characters required" : "Invalid GSTIN format"
+  );
+  return false;
+}
+
+function validateDob(){
+  const input = $("dob");
+  const value = input.value.trim();
+
+  if(!value){
+    updateInputState(input,"pending");
+    setValidation("dobState","pending","Kindly enter Date of Birth");
+    return false;
+  }
+
+  const match = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(\d{4})$/.exec(value);
+
+  if(!match){
+    updateInputState(input,"invalid");
+    setValidation("dobState","invalid",value.length < 10 ? "Invalid — use DD/MM/YYYY" : "Invalid date");
+    return false;
+  }
+
+  const day = Number(match[1]);
+  const month = Number(match[2]) - 1;
+  const year = Number(match[3]);
+  const date = new Date(year,month,day);
+
+  if(date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day){
+    updateInputState(input,"invalid");
+    setValidation("dobState","invalid","Invalid calendar date");
+    return false;
+  }
+
+  if(date > new Date()){
+    updateInputState(input,"invalid");
+    setValidation("dobState","invalid","Invalid — future date");
+    return false;
+  }
+
+  updateInputState(input,"valid");
+  setValidation("dobState","valid","Valid Date of Birth");
+  return true;
+}
+
+function updateButton(button, enabled){
+  button.disabled = !enabled;
+}
+
+function clearForm(formId){
+  const form = $(formId);
+  if(!form) return;
+  form.reset();
+
+  form.querySelectorAll("input").forEach(input => {
+    input.classList.remove("valid","invalid");
+  });
+
+  if(formId === "panForm"){
+    setValidation("panState","pending","Kindly enter PAN");
+    setValidation("dobState","pending","Kindly enter Date of Birth");
+    updateButton($("panBtn"),false);
+  }
+  if(formId === "searchForm"){
+    setValidation("searchPanState","pending","Kindly enter PAN");
+    updateButton($("searchBtn"),false);
+  }
+  if(formId === "gstinForm"){
+    setValidation("gstinState","pending","Kindly enter GSTIN");
+    updateButton($("gstinBtn"),false);
+  }
+  if(formId === "returnsForm"){
+    setValidation("returnGstinState","pending","Kindly enter GSTIN");
+    updateButton($("returnsBtn"),false);
+  }
+}
+
+function normalizePanInput(input){
+  input.value = input.value.toUpperCase().replace(/\s/g,"").slice(0,10);
+}
+function normalizeGstinInput(input){
+  input.value = input.value.toUpperCase().replace(/\s/g,"").slice(0,15);
+}
+function normalizeDobInput(input){
+  let digits = input.value.replace(/\D/g,"").slice(0,8);
+  if(digits.length > 4) digits = `${digits.slice(0,2)}/${digits.slice(2,4)}/${digits.slice(4)}`;
+  else if(digits.length > 2) digits = `${digits.slice(0,2)}/${digits.slice(2)}`;
+  input.value = digits;
+}
+
+/* SESSION + API MONITORING */
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+let sessionExpiryTimer = null;
+
+function resetSessionTimeout(){
+  clearTimeout(sessionExpiryTimer);
+  sessionExpiryTimer = setTimeout(() => {
+    sessionStorage.removeItem("JA_VERIFICATION_HISTORY");
+    ["pan","dob","searchPan","gstin","returnGstin"].forEach(id => {
+      const el = $(id);
+      if(el) el.value = "";
+    });
+    ["panForm","searchForm","gstinForm","returnsForm"].forEach(clearForm);
+    renderHistory();
+    toast("Session expired. Verification history and entered data were cleared.");
+  }, SESSION_TIMEOUT_MS);
+}
+
+function startSessionSecurity(){
+  ["click","keydown","mousemove","touchstart","input"].forEach(eventName => {
+    document.addEventListener(eventName, resetSessionTimeout, {passive:true});
+  });
+  resetSessionTimeout();
+}
+
+function startHealthMonitoring(){
+  // Intentionally no automatic health polling.
+  // API health is updated from real verification requests or by manual Retry.
+}
+
+/* API */
+function firstApiMessage(value){
+  if(Array.isArray(value)) return value.map(firstApiMessage).filter(Boolean).join(" ");
+  if(value && typeof value === "object"){
+    for(const key of ["message","msg","error","detail","description"]){
+      const found = firstApiMessage(value[key]);
+      if(found) return found;
+    }
+  }
+  if(typeof value === "string") return value.trim();
+  return "";
+}
+
+function classifyApiFailure(status, data, rawText = ""){
+  const nestedStatus = Number(data?.status || data?.data?.status || 0) || 0;
+  const message = firstApiMessage(data) || firstApiMessage(data?.data) || rawText.trim();
+  const lower = message.toLowerCase();
+  const payloadEmpty = data && typeof data === "object" &&
+    data.success === false &&
+    data.data && typeof data.data === "object" &&
+    !Array.isArray(data.data) && Object.keys(data.data).length === 0;
+
+  // API can return HTTP 200/206 while the actual verification failed inside JSON.
+  if(nestedStatus === 400 || /invalid pan/.test(lower)){
+    return {
+      kind:"INVALID_PAN",
+      title:"PAN could not be verified",
+      message:"The PAN verification service rejected the supplied PAN details.",
+      detail:"Invalid PAN response",
+      help:"Check the PAN and Date of Birth and try again."
+    };
+  }
+
+  if(/invalid gstin/.test(lower) || /gstin.*invalid/.test(lower)){
+    return {
+      kind:"INVALID_GSTIN",
+      title:"Invalid GSTIN",
+      message:"The GSTIN verification service reported the GSTIN as invalid.",
+      detail:"Invalid GSTIN response",
+      help:"Check the 15-character GSTIN and try again."
+    };
+  }
+
+  if(status === 401 || status === 403){
+    return {
+      kind:"AUTH_ERROR",
+      title:"Verification service authorization failed",
+      message:"The verification service could not authorize this request.",
+      detail:`HTTP ${status}`,
+      help:"This is normally a server-side API key, secret, origin or permission configuration issue."
+    };
+  }
+
+  if(status === 404){
+    return {
+      kind:"ROUTE_NOT_FOUND",
+      title:"Verification service route not found",
+      message:"The requested API endpoint was not found on the Worker.",
+      detail:"HTTP 404",
+      help:"Check the Worker deployment and the /api route configuration."
+    };
+  }
+
+  if(status === 408 || status === 504){
+    return {
+      kind:"TIMEOUT",
+      title:"Verification service timed out",
+      message:"The API did not respond within the expected time.",
+      detail:`HTTP ${status}`,
+      help:"Please wait a moment and retry."
+    };
+  }
+
+  if(status === 429){
+    return {
+      kind:"RATE_LIMIT",
+      title:"Too many verification requests",
+      message:"The verification service is temporarily rate-limiting requests.",
+      detail:"HTTP 429",
+      help:"Wait briefly before trying again."
+    };
+  }
+
+  if(status >= 500){
+    return {
+      kind:"SERVER_ERROR",
+      title:"Verification service is temporarily unavailable",
+      message:"The Worker or upstream verification service returned a server error.",
+      detail:`HTTP ${status}`,
+      help:"Retry shortly. If the problem continues, check Worker and upstream API logs."
+    };
+  }
+
+  if(payloadEmpty || (status === 206 && data?.success === false)){
+    return {
+      kind:"NOT_FOUND",
+      title:"No matching record found",
+      message:"The verification service did not return a matching record for the supplied information.",
+      detail:`HTTP ${status}`,
+      help:"Verify the input and try again. A record may not exist or the upstream service may have no matching data."
+    };
+  }
+
+  if(data?.success === false || !status || !responseStatusIsSuccessful(status)){
+    return {
+      kind:"API_ERROR",
+      title:"Verification request was not successful",
+      message:status === 400 ? "The verification service rejected the request." : "The verification service could not complete the request.",
+      detail:status ? `HTTP ${status}` : "No HTTP status received",
+      help:"Check the input and retry. If the issue persists, check the API service."
+    };
+  }
+
+  return null;
+}
+
+function responseStatusIsSuccessful(status){
+  return status >= 200 && status < 300;
+}
+
+async function api(path){
+  const start = performance.now();
+  let response;
+
+  try{
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    try {
+      response = await fetch(path,{
+        method:"GET",
+        headers:{"Accept":"application/json"},
+        credentials:"omit",
+        cache:"no-store",
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }catch(error){
+    const timedOut = error?.name === "AbortError";
+    throw Object.assign(
+      new Error(timedOut ? "The verification service timed out." : "Unable to connect to the verification service."),
+      {
+        code: timedOut ? "TIMEOUT" : "NETWORK_ERROR",
+        kind: timedOut ? "TIMEOUT" : "NETWORK_ERROR",
+        title: timedOut ? "Verification service timed out" : "Unable to connect to verification service",
+        userMessage: timedOut
+          ? "The verification service did not respond within 15 seconds."
+          : "The browser could not reach the verification service.",
+        help: timedOut
+          ? "Please wait a moment and retry."
+          : "Check your internet connection and confirm that the Cloudflare Worker is online.",
+        cause:error
+      }
+    );
+  }
+
+  const elapsed = Math.round(performance.now() - start);
+  const text = await response.text();
+  let data = null;
+
+  try{ data = text ? JSON.parse(text) : null; }
+  catch{ data = {raw:text}; }
+
+  const failure = classifyApiFailure(response.status,data,text);
+  if(!response.ok || failure){
+    if(["NETWORK_ERROR","TIMEOUT","SERVER_ERROR","AUTH_ERROR","ROUTE_NOT_FOUND"].includes(failure?.kind)){
+      const status = $("systemStatus");
+      const statusText = $("systemStatusText");
+      if(status && statusText){
+        status.className = "system-status bad";
+        statusText.textContent = failure?.kind === "TIMEOUT" ? "API Timeout" : "API Issue";
+      }
+    }
+    const detail = failure?.detail || `HTTP ${response.status}`;
+    throw Object.assign(
+      new Error(failure?.message || firstApiMessage(data) || `Request failed (HTTP ${response.status})`),
+      {
+        status:response.status,
+        data,
+        ms:elapsed,
+        code:failure?.kind || `HTTP_${response.status}`,
+        kind:failure?.kind || "API_ERROR",
+        title:failure?.title || "Verification request failed",
+        userMessage:failure?.message || firstApiMessage(data) || `The verification service returned HTTP ${response.status}.`,
+        detail,
+        help:failure?.help || "Please retry the verification."
+      }
+    );
+  }
+
+  // A successful API call is also a live health signal.
+  const statusEl = $("systemStatus");
+  const statusTextEl = $("systemStatusText");
+  if(statusEl && statusTextEl){
+    statusEl.className = "system-status ok";
+    statusTextEl.textContent = "System Online";
+  }
+
+  return {data,status:response.status,ms:elapsed};
+}
+
+function apiErrorHtml(error, action, formId){
+  const title = error.title || "Verification request failed";
+  const message = error.userMessage || error.message || "The verification service could not complete the request.";
+  const detail = error.detail || (error.status ? `HTTP ${error.status}` : "Service error");
+  const help = error.help || "Please verify the entered information and try again.";
+  const retry = formId
+    ? `<button class="btn light" type="button" data-retry-form="${esc(formId)}">Try Again</button>`
+    : "";
+
+  return `<div class="notice error api-error">
+    <div class="api-error-title">${esc(title)}</div>
+    <div class="api-error-message">${esc(message)}</div>
+    <div class="api-error-meta">
+      ${error.status ? `<span>HTTP ${esc(error.status)}</span>` : ""}
+      ${error.code ? `<span>${esc(error.code)}</span>` : ""}
+      ${error.ms ? `<span>${esc(error.ms)} ms</span>` : ""}
+    </div>
+    <div class="api-error-help">${esc(help)}</div>
+    <div class="api-error-actions">${retry}</div>
+  </div>`;
+}
+
+function setLoading(button, loading, label){
+  button.disabled = loading;
+  button.innerHTML = loading
+    ? `<span class="spinner"></span>${esc(label)}`
+    : esc(label);
+}
+
+async function checkHealth(options = {}){
+  const silent = options.silent === true;
+  const status = $("systemStatus");
+  const statusText = $("systemStatusText");
+
+  status.className = "system-status busy";
+  statusText.textContent = "Checking...";
+
+  if($("apiState")){
+    $("apiState").className = "api-state busy";
+    $("apiStateTitle").textContent = "Checking API...";
+    $("apiStateText").textContent = "Testing service health";
+  }
+
+  try{
+    const result = await api("/api/health");
+    const data = result.data || {};
+    lastHealth = {ok:true,...result,time:new Date()};
+
+    status.className = "system-status ok";
+    statusText.textContent = "System Online";
+
+    if($("apiState")){
+      $("apiState").className = "api-state ok";
+      $("apiStateTitle").textContent = "System Online";
+      $("apiStateText").textContent = data.status || "Verification API is responding normally";
+      $("apiHttp").textContent = result.status;
+      $("apiMs").textContent = `${result.ms} ms`;
+      $("apiService").textContent = data.service || "Jain & Associates API";
+      $("apiChecked").textContent = new Date().toLocaleTimeString("en-IN");
+      $("apiError").innerHTML = "";
+    }
+  }catch(error){
+    lastHealth = {ok:false,error,time:new Date()};
+
+    status.className = "system-status bad";
+    statusText.textContent = "System Offline";
+
+    if($("apiState")){
+      $("apiState").className = "api-state bad";
+      $("apiStateTitle").textContent = "API Unavailable";
+      $("apiStateText").textContent = "The verification service did not return a successful response";
+      $("apiHttp").textContent = error.status || "—";
+      $("apiMs").textContent = error.ms ? `${error.ms} ms` : "—";
+      $("apiService").textContent = "Jain & Associates API";
+      $("apiChecked").textContent = new Date().toLocaleTimeString("en-IN");
+      $("apiError").innerHTML =
+        `<div class="notice warn"><b>Connection issue.</b><br>${esc(error.message)}<br><br>Check the Worker route, CORS configuration and server-side API secret.</div>`;
+    }
+  }
+}
+
+function openApiModal(){
+  $("apiModal").classList.add("open");
+  checkHealth();
+}
+function closeApiModal(){
+  $("apiModal").classList.remove("open");
+}
+
+/* RESULTS */
+function badge(value){
+  const text = String(value || "—");
+  const lower = text.toLowerCase();
+  let cls = "gray";
+
+  if(["active","valid","valid and operative","filed","healthy","online"].some(x => lower.includes(x))) cls = "green";
+  else if(["cancel","invalid","inoperative","error","reject","failed"].some(x => lower.includes(x))) cls = "red";
+  else if(["pending","not"].some(x => lower.includes(x))) cls = "amber";
+
+  return `<span class="badge ${cls}">${esc(text)}</span>`;
+}
+
+function info(label,value){
+  return `<div class="info"><small>${esc(label)}</small><strong>${esc(value || "—")}</strong></div>`;
+}
+
+function mini(label,value){
+  return `<div class="mini"><small>${esc(label)}</small><b>${esc(value || "—")}</b></div>`;
+}
+
+function addressText(address = {}){
+  return [
+    address.flno,address.bno,address.bnm,address.st,address.locality,
+    address.loc,address.dst,address.stcd,address.pncd
+  ].filter(Boolean).join(", ");
+}
+
+function copyText(value){
+  navigator.clipboard?.writeText(String(value || "")).then(
+    () => toast("Copied to clipboard."),
+    () => toast("Unable to copy.")
+  );
+}
+
+function resultCard(title,subtitle,body,targetId){
+  latestResult = {
+    title,subtitle,body,
+    created:new Date()
+  };
+
+  $(targetId).innerHTML = `
+    <div class="result-card" data-result-card>
+      <div class="result-head">
+        <div>
+          <h2>${esc(title)}</h2>
+          <p>${esc(subtitle)}</p>
+        </div>
+        <div class="result-actions">
+          <button class="btn green" type="button" data-action="export-pdf">Export PDF</button>
+        </div>
+      </div>
+      ${body}
+    </div>
+  `;
+
+  $(targetId).scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function exportPDF(){
+  if(!latestResult){
+    toast("No verification result available.");
+    return;
+  }
+  window.print();
+}
+
+function maskSensitiveIdentifier(value){
+  const text = String(value ?? "");
+  if(PAN_REGEX.test(text)) return `${text.slice(0,2)}******${text.slice(-2)}`;
+  if(GSTIN_REGEX.test(text)) return `${text.slice(0,2)}***********${text.slice(-2)}`;
+  return "Verification request";
+}
+
+function saveHistory(type,query,title,result="Success"){
+  const key = "JA_VERIFICATION_HISTORY";
+  let history = [];
+  try{history = JSON.parse(sessionStorage.getItem(key) || "[]");}catch{history=[]}
+
+  // Metadata only: never persist API response payloads or DOB.
+  const maskedQuery = maskSensitiveIdentifier(query);
+  history.unshift({
+    id:crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    type,query:maskedQuery,title,result,
+    time:new Date().toISOString()
+  });
+
+  sessionStorage.setItem(key,JSON.stringify(history.slice(0,50)));
+}
+
+function getHistory(){
+  try{return JSON.parse(sessionStorage.getItem("JA_VERIFICATION_HISTORY") || "[]");}
+  catch{return []}
+}
+
+function renderHistory(){
+  const box = $("historyList");
+  const history = getHistory();
+
+  if(!history.length){
+    box.innerHTML = `<div class="empty">No verification history yet.</div>`;
+    return;
+  }
+
+  box.innerHTML = history.map(item => `
+    <div class="history-row">
+      <div class="history-icon">✓</div>
+      <div class="history-main">
+        <b>${esc(item.title)}</b>
+        <small>${esc(item.query)} · ${esc(new Date(item.time).toLocaleString("en-IN"))}</small>
+      </div>
+      ${badge(item.result)}
+    </div>
+  `).join("");
+}
+
+function clearHistory(){
+  sessionStorage.removeItem("JA_VERIFICATION_HISTORY");
+  renderHistory();
+  toast("Verification history cleared.");
+}
+
+function exportHistoryCSV(){
+  const history = getHistory();
+  if(!history.length){
+    toast("No history available.");
+    return;
+  }
+
+  const rows = [
+    ["Date & Time","Tool","Input","Result"],
+    ...history.map(x => [
+      new Date(x.time).toLocaleString("en-IN"),
+      x.title,
+      x.query,
+      x.result
+    ])
+  ];
+
+  const csv = rows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g,'""')}"`).join(",")).join("\r\n");
+  const blob = new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `JAVerification-History-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* PAN */
+$("panForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  if(!validatePan("pan","panState") || !validateDob()) return;
+
+  const button = $("panBtn");
+  const pan = $("pan").value;
+  const dob = $("dob").value;
+
+  setLoading(button,true,"Verifying PAN...");
+
+  try{
+    const result = await api(`/api/pan/verify?pan=${encodeURIComponent(pan)}&dob=${encodeURIComponent(dob)}`);
+    const data = result.data?.data || {};
+
+    const body = `
+      <div class="notice success"><b>Verification completed.</b> PAN response received successfully.</div>
+
+      <div class="kpis">
+        <div class="kpi"><small>PAN</small><strong>${esc(data.pan || pan)}</strong></div>
+        <div class="kpi"><small>Full Name</small><strong>${esc(data.fullNameAsPan || "—")}</strong></div>
+        <div class="kpi"><small>Status</small><strong>${badge(data.status)}</strong></div>
+        <div class="kpi"><small>Response Time</small><strong>${result.ms} ms</strong></div>
+      </div>
+
+      <div class="info-grid">
+        ${info("PAN",data.pan || pan)}
+        ${info("Full Name as PAN",data.fullNameAsPan)}
+        ${info("PAN Status",data.status)}
+        ${info("Aadhaar-PAN Linking",data.dateOfAadhaarPanLinking || "Not provided")}
+        ${info("ITR Applicability",data.itrFilerOrNonFilerApplicability || "Not provided")}
+        ${info("HTTP Status",result.status)}
+      </div>
+
+      <div class="card-actions">
+        <button class="copy-btn" type="button" data-copy="${esc(data.pan || pan)}">Copy PAN</button>
+        <button class="copy-btn" type="button" data-copy="${esc(data.fullNameAsPan || "")}">Copy Name</button>
+      </div>
+    `;
+
+    saveHistory("PAN",pan,"PAN Verification");
+    resultCard("PAN Verification",`${pan} · DOB ${dob}`,body,"panInline");
+  }catch(error){
+    saveHistory("PAN",pan,"PAN Verification","Failed");
+    resultCard(
+      "PAN Verification",
+      "Verification failed",
+      apiErrorHtml(error,"PAN verification","panForm"),
+      "panInline"
+    );
+  }finally{
+    setLoading(button,false,"Verify PAN");
+    syncButtons();
+  }
+});
+
+/* PAN → GSTIN */
+$("searchForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  if(!validatePan("searchPan","searchPanState")) return;
+
+  const button = $("searchBtn");
+  const pan = $("searchPan").value;
+  setLoading(button,true,"Searching...");
+
+  try{
+    const result = await api(`/api/gst/search?keyword=${encodeURIComponent(pan)}`);
+    const rows = Array.isArray(result.data?.data) ? result.data.data : [];
+
+    let body = `
+      <div class="notice info">Found <b>${rows.length}</b> GST registration record(s) for <b>${esc(pan)}</b>.</div>
+    `;
+
+    if(!rows.length){
+      body += `<div class="empty">No GST registrations were returned for this PAN.</div>`;
+    }else{
+      body += `<div class="gstin-grid">`;
+
+      rows.forEach((item,index) => {
+        const gstin = item.gstin || "";
+        body += `
+          <article class="gst-card">
+            <div class="gst-top">
+              <div>
+                <div class="gstin-value">${esc(gstin)}</div>
+                <div class="legal">${esc(item.lgnm || "—")}</div>
+              </div>
+              ${badge(item.sts)}
+            </div>
+
+            <div class="meta">
+              ${mini("Trade Name",item.tradeNam)}
+              ${mini("Constitution",item.ctb)}
+              ${mini("Registration",item.rgdt)}
+              ${mini("Business",item.pradr?.ntr || item.nba?.join(", "))}
+              ${mini("State",item.pradr?.addr?.stcd)}
+              ${mini("E-Invoice",item.einvoiceStatus)}
+            </div>
+
+            <div class="address">
+              <b>Principal Address</b><br>
+              ${esc(addressText(item.pradr?.addr || {})) || "—"}
+            </div>
+
+            <div class="card-actions">
+              <button class="copy-btn" type="button" data-copy="${esc(gstin)}">Copy GSTIN</button>
+              <button class="btn light" type="button" data-open-gstin="${esc(gstin)}">View GSTIN</button>
+              <button class="btn light" type="button" data-open-returns="${esc(gstin)}">Returns</button>
+            </div>
+          </article>
+        `;
+      });
+
+      body += `</div>`;
+    }
+
+    saveHistory("PAN → GSTIN",pan,"PAN to GSTIN Finder");
+    resultCard("PAN to GSTIN Finder",`${pan} · ${rows.length} registration(s)`,body,"searchInline");
+  }catch(error){
+    saveHistory("PAN → GSTIN",pan,"PAN to GSTIN Finder","Failed");
+    resultCard(
+      "PAN to GSTIN Finder",
+      "Search failed",
+      apiErrorHtml(error,"PAN to GSTIN search","searchForm"),
+      "searchInline"
+    );
+  }finally{
+    setLoading(button,false,"Find GSTIN Records");
+    syncButtons();
+  }
+});
+
+function openGstinFromSearch(gstin){
+  $("gstin").value = gstin;
+  validateGstin("gstin","gstinState");
+  showView("gstinView");
+  $("gstinForm").requestSubmit();
+}
+
+function openReturnsFromSearch(gstin){
+  $("returnGstin").value = gstin;
+  validateGstin("returnGstin","returnGstinState");
+  showView("returnsView");
+  $("returnsForm").requestSubmit();
+}
+
+/* GSTIN */
+$("gstinForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  if(!validateGstin("gstin","gstinState")) return;
+
+  const button = $("gstinBtn");
+  const gstin = $("gstin").value;
+
+  setLoading(button,true,"Searching...");
+
+  try{
+    // UNIQUE_ID is intentionally not sent by the browser.
+    // The Cloudflare Worker adds its environment value server-side.
+    const query = `?keyword=${encodeURIComponent(gstin)}`;
+    const result = await api(`/api/gst/gstin${query}`);
+    const data = result.data?.data || {};
+    const address = data.pradr?.addr || {};
+
+    const body = `
+      <div class="notice success"><b>GSTIN details retrieved.</b> Registration information was returned successfully.</div>
+
+      <div class="kpis">
+        <div class="kpi"><small>GSTIN</small><strong>${esc(data.gstin || gstin)}</strong></div>
+        <div class="kpi"><small>Legal Name</small><strong>${esc(data.lgnm || "—")}</strong></div>
+        <div class="kpi"><small>Trade Name</small><strong>${esc(data.tradeNam || "—")}</strong></div>
+        <div class="kpi"><small>Status</small><strong>${badge(data.sts)}</strong></div>
+      </div>
+
+      <div class="info-grid">
+        ${info("GSTIN",data.gstin || gstin)}
+        ${info("Legal Name",data.lgnm)}
+        ${info("Trade Name",data.tradeNam)}
+        ${info("Taxpayer Type",data.dty)}
+        ${info("Constitution",data.ctb)}
+        ${info("Registration Date",data.rgdt)}
+        ${info("Last Updated",data.lstupdt)}
+        ${info("Nature of Business",data.pradr?.ntr || data.nba?.join(", "))}
+        ${info("E-Invoice",data.einvoiceStatus)}
+        ${info("State",address.stcd)}
+        ${info("District",address.dst)}
+        ${info("Pincode",address.pncd)}
+      </div>
+
+      <div class="address">
+        <b>Principal Address</b><br>${esc(addressText(address)) || "—"}
+      </div>
+
+      <div class="card-actions">
+        <button class="copy-btn" type="button" data-copy="${esc(data.gstin || gstin)}">Copy GSTIN</button>
+        <button class="copy-btn" type="button" data-copy="${esc(data.lgnm || "")}">Copy Legal Name</button>
+        <button class="copy-btn" type="button" data-copy="${esc(addressText(address))}">Copy Address</button>
+      </div>
+    `;
+
+    saveHistory("GSTIN",gstin,"GSTIN Details Finder");
+    resultCard("GSTIN Details Finder",`${gstin} · ${result.ms} ms`,body,"gstinInline");
+  }catch(error){
+    saveHistory("GSTIN",gstin,"GSTIN Details Finder","Failed");
+    resultCard(
+      "GSTIN Details Finder",
+      "Verification failed",
+      apiErrorHtml(error,"GSTIN details","gstinForm"),
+      "gstinInline"
+    );
+  }finally{
+    setLoading(button,false,"Search GSTIN Registry");
+    syncButtons();
+  }
+});
+
+/* RETURNS */
+$("returnsForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  if(!validateGstin("returnGstin","returnGstinState")) return;
+
+  const button = $("returnsBtn");
+  const gstin = $("returnGstin").value;
+  const fy = $("fy").value;
+
+  setLoading(button,true,"Checking...");
+
+  try{
+    const result = await api(`/api/gst/return-status?keyword=${encodeURIComponent(gstin)}&financial_year=${encodeURIComponent(fy)}`);
+    const rows = Array.isArray(result.data?.data?.EFiledlist) ? result.data.data.EFiledlist : [];
+    const filed = rows.filter(x => String(x.status || "").toLowerCase() === "filed").length;
+
+    const body = `
+      <div class="notice success"><b>Return data retrieved.</b> ${rows.length} record(s) returned.</div>
+
+      <div class="kpis">
+        <div class="kpi"><small>GSTIN</small><strong>${esc(gstin)}</strong></div>
+        <div class="kpi"><small>Financial Year</small><strong>${esc(fy)}</strong></div>
+        <div class="kpi"><small>Records</small><strong>${rows.length}</strong></div>
+        <div class="kpi"><small>Filed</small><strong>${filed}</strong></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Return</th><th>Period</th><th>Filing Date</th>
+              <th>Status</th><th>Mode</th><th>ARN</th><th>Valid</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${
+              rows.length
+              ? rows.map(row => `
+                <tr>
+                  <td><b>${esc(row.rtntype)}</b></td>
+                  <td>${esc(row.ret_prd)}</td>
+                  <td>${esc(row.dof)}</td>
+                  <td>${badge(row.status)}</td>
+                  <td>${esc(row.mof)}</td>
+                  <td>${esc(row.arn)}</td>
+                  <td>${esc(row.valid)}</td>
+                </tr>
+              `).join("")
+              : `<tr><td colspan="7">No filing records were returned.</td></tr>`
+            }
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    saveHistory("GST Returns",gstin,`GST Return Status · ${fy}`);
+    resultCard("GST Return Status",`${gstin} · FY ${fy} · ${result.ms} ms`,body,"returnsInline");
+  }catch(error){
+    saveHistory("GST Returns",gstin,`GST Return Status · ${fy}`,"Failed");
+    resultCard(
+      "GST Return Status",
+      "Request failed",
+      apiErrorHtml(error,"GST return status","returnsForm"),
+      "returnsInline"
+    );
+  }finally{
+    setLoading(button,false,"Check Returns");
+    syncButtons();
+  }
+});
+
+/* LIVE VALIDATION */
+function syncButtons(){
+  updateButton($("panBtn"),PAN_REGEX.test($("pan").value) && isValidDobValue($("dob").value));
+  updateButton($("searchBtn"),PAN_REGEX.test($("searchPan").value));
+  updateButton($("gstinBtn"),GSTIN_REGEX.test($("gstin").value));
+  updateButton($("returnsBtn"),GSTIN_REGEX.test($("returnGstin").value));
+}
+
+function isValidDobValue(value){
+  const match = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(\d{4})$/.exec(value);
+  if(!match) return false;
+  const day=Number(match[1]),month=Number(match[2])-1,year=Number(match[3]);
+  const date=new Date(year,month,day);
+  return date.getFullYear()===year &&
+         date.getMonth()===month &&
+         date.getDate()===day &&
+         date<=new Date();
+}
+
+$("pan").addEventListener("input",() => {
+  normalizePanInput($("pan"));
+  validatePan("pan","panState");
+  validateDob();
+  syncButtons();
+});
+$("dob").addEventListener("input",() => {
+  normalizeDobInput($("dob"));
+  validateDob();
+  syncButtons();
+});
+$("searchPan").addEventListener("input",() => {
+  normalizePanInput($("searchPan"));
+  validatePan("searchPan","searchPanState");
+  syncButtons();
+});
+$("gstin").addEventListener("input",() => {
+  normalizeGstinInput($("gstin"));
+  validateGstin("gstin","gstinState");
+  syncButtons();
+});
+$("returnGstin").addEventListener("input",() => {
+  normalizeGstinInput($("returnGstin"));
+  validateGstin("returnGstin","returnGstinState");
+  syncButtons();
+});
+
+["pan","dob","searchPan","gstin","returnGstin"].forEach(id => {
+  $(id).addEventListener("blur",syncButtons);
+});
+
+document.addEventListener("keydown",event => {
+  if(event.key === "Escape"){
+    closeApiModal();
+    closeSidebar();
+  }
+});
+
+window.addEventListener("resize",() => {
+  if(window.innerWidth > 850) closeSidebar();
+});
+
+/* SECURITY: basic browser UI deterrents.
+   These do NOT replace server-side security controls. */
+document.addEventListener("contextmenu", event => {
+  event.preventDefault();
+});
+
+document.addEventListener("keydown", event => {
+  const key = event.key.toLowerCase();
+
+  const blocked =
+    event.key === "F12" ||
+    (event.ctrlKey && event.shiftKey && ["i", "j", "c"].includes(key)) ||
+    (event.ctrlKey && key === "u") ||
+    (event.metaKey && event.altKey && ["i", "j", "c"].includes(key));
+
+  if (blocked) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+});
+
+/* SECURITY: centralized event handling; no inline onclick handlers. */
+document.addEventListener("click", event => {
+  const target = event.target.closest("button, [data-action], [data-view], [data-copy], [data-retry-form], [data-open-gstin], [data-open-returns], [data-clear-form]");
+  if(!target) return;
+
+  if(target.dataset.view){
+    showView(target.dataset.view, target);
+    return;
+  }
+
+  if(target.dataset.copy !== undefined){
+    copyText(target.dataset.copy);
+    return;
+  }
+
+  if(target.dataset.retryForm){
+    const form = $(target.dataset.retryForm);
+    if(form) form.requestSubmit();
+    return;
+  }
+
+  if(target.dataset.openGstin){
+    openGstinFromSearch(target.dataset.openGstin);
+    return;
+  }
+
+  if(target.dataset.openReturns){
+    openReturnsFromSearch(target.dataset.openReturns);
+    return;
+  }
+
+  if(target.dataset.clearForm){
+    clearForm(target.dataset.clearForm);
+    return;
+  }
+
+  switch(target.dataset.action){
+    case "toggle-sidebar": toggleSidebar(); break;
+    case "close-sidebar": closeSidebar(); break;
+    case "open-api-modal": openApiModal(); break;
+    case "close-api-modal": closeApiModal(); break;
+    case "check-health": checkHealth(); break;
+    case "export-pdf": exportPDF(); break;
+    case "export-history": exportHistoryCSV(); break;
+    case "clear-history": clearHistory(); break;
+    case "modal-backdrop":
+      if(event.target === target) closeApiModal();
+      break;
+  }
+});
+
+/* Initial state */
+showView("panView");
+
+// No automatic health request on page load. Health is checked on demand
+// from the API status popup or inferred from real verification requests.
+syncButtons();
+startSessionSecurity();
+</script>
+</body>
+</html>
