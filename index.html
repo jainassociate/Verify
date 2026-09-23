@@ -243,6 +243,133 @@ tr:last-child td{border-bottom:0}
 }
 .copy-btn:hover{background:#f8fafc;border-color:#bfdbfe;color:#1d4ed8}
 
+/* ENHANCED RESULT PRESENTATION */
+.result-card{
+  overflow:hidden;
+  background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
+}
+.result-card .result-head{
+  align-items:center;
+  background:linear-gradient(135deg,#f8fbff 0%,#ffffff 70%);
+  margin:-20px -20px 16px;
+  padding:17px 20px 14px;
+  border-bottom:1px solid #e3ebf4;
+}
+.result-title-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.result-title-row h2{margin:0}
+.result-subline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px}
+.result-subline .meta-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:999px;background:#f1f5f9;
+  color:#64748b;font-size:8px;font-weight:800;border:1px solid #e2e8f0
+}
+.result-subline .meta-chip strong{color:#334155}
+.result-head .result-actions{align-items:center}
+.result-status{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 9px;
+  border-radius:999px;background:#ecfdf5;color:#047857;
+  border:1px solid #bbf7d0;font-size:9px;font-weight:900;white-space:nowrap
+}
+.result-status .status-dot{width:6px;height:6px;border-radius:50%;background:#10b981}
+.section-title{
+  display:flex;align-items:center;gap:8px;margin:16px 0 9px;
+  font-size:11px;font-weight:900;color:#17324f;
+  text-transform:uppercase;letter-spacing:.06em
+}
+.section-title::before{
+  content:"";width:3px;height:14px;border-radius:3px;background:var(--orange)
+}
+.section-title:first-child{margin-top:0}
+.enhanced-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.enhanced-item{
+  border:1px solid #e0e8f1;border-radius:10px;background:#fff;
+  padding:10px 11px;min-width:0;transition:border-color .15s,box-shadow .15s
+}
+.enhanced-item:hover{border-color:#c9d9ea;box-shadow:0 3px 10px rgba(15,23,42,.04)}
+.enhanced-item small{display:block;color:#7890a8;font-size:8px;font-weight:700;margin-bottom:4px}
+.enhanced-item strong{display:block;color:#142b45;font-size:10px;line-height:1.35;word-break:break-word}
+.enhanced-item .sub{display:block;color:#64748b;font-size:8px;margin-top:3px}
+.summary-strip{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:12px
+}
+.summary-tile{
+  position:relative;border:1px solid #dfe8f2;border-radius:11px;
+  padding:11px 12px;background:#fff;overflow:hidden
+}
+.summary-tile::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#2563eb
+}
+.summary-tile.success::before{background:#10b981}
+.summary-tile.warning::before{background:#f59e0b}
+.summary-tile.orange::before{background:var(--orange)}
+.summary-tile small{display:block;color:#71839a;font-size:8px;font-weight:700}
+.summary-tile strong{display:block;color:#122033;font-size:13px;margin-top:4px;word-break:break-word}
+.summary-tile span{display:block;color:#64748b;font-size:8px;margin-top:3px}
+.address-card{
+  border:1px solid #dfe8f2;border-radius:11px;background:#f8fbff;
+  padding:12px 13px;margin-top:12px
+}
+.address-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.address-card-head b{font-size:10px;color:#17324f}
+.address-card-text{font-size:10px;line-height:1.6;color:#334e68}
+.result-toolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:14px;padding-top:11px;border-top:1px solid #e7edf4
+}
+.result-toolbar .toolbar-note{font-size:8px;color:#7890a8}
+.result-toolbar .card-actions{margin-top:0}
+.gst-card{
+  background:linear-gradient(180deg,#fff 0%,#fbfdff 100%);
+  box-shadow:0 2px 7px rgba(15,23,42,.025)
+}
+.gst-card .gst-top{padding-bottom:9px;border-bottom:1px dashed #dfe7ef}
+.gst-card .meta{margin-top:10px}
+.gst-card .card-actions{padding-top:9px;border-top:1px solid #edf1f5}
+.gstin-hero{
+  display:grid;grid-template-columns:minmax(0,1.4fr) minmax(150px,.6fr);gap:10px;
+  margin-bottom:12px
+}
+.gstin-identity{
+  border:1px solid #dce7f2;border-radius:11px;padding:13px;background:#fff
+}
+.gstin-code{font-size:17px;font-weight:950;letter-spacing:.3px;color:#0f2c4b;word-break:break-all}
+.gstin-name{font-size:11px;font-weight:800;color:#334e68;margin-top:4px}
+.gstin-trade{font-size:9px;color:#64748b;margin-top:3px}
+.gstin-state{
+  border:1px solid #dce7f2;border-radius:11px;padding:13px;background:#f8fbff;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start
+}
+.gstin-state small{font-size:8px;color:#7890a8;font-weight:700}
+.gstin-state .badge{margin-top:5px}
+.return-summary{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px
+}
+.return-tile{
+  border:1px solid #e0e8f1;border-radius:10px;background:#fff;padding:10px 11px
+}
+.return-tile small{display:block;color:#7890a8;font-size:8px;font-weight:700}
+.return-tile strong{display:block;font-size:12px;color:#17324f;margin-top:4px}
+.return-tile.success strong{color:#047857}
+.return-table thead th{position:sticky;top:0;z-index:1;background:#eef5fb;color:#36516d}
+.return-table tbody tr:nth-child(even){background:#fbfdff}
+.return-table tbody tr:hover{background:#f3f8fd}
+.return-table td{height:38px}
+.return-table td:first-child{color:#17324f}
+.arn-cell{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:8px;color:#475569}
+@media(max-width:900px){
+  .enhanced-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .return-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .gstin-hero{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .result-card .result-head{margin:-14px -14px 14px;padding:14px}
+  .enhanced-grid,.summary-strip,.return-summary{grid-template-columns:1fr 1fr}
+  .result-toolbar{align-items:flex-start;flex-direction:column}
+  .result-toolbar .card-actions{width:100%}
+  .result-toolbar .card-actions .copy-btn{flex:1}
+}
+
 /* HISTORY */
 .history-row{
   display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)
@@ -1325,12 +1452,19 @@ function resultCard(title,subtitle,body,targetId){
     created:new Date()
   };
 
+  const now = new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
   $(targetId).innerHTML = `
     <div class="result-card" data-result-card>
       <div class="result-head">
         <div>
-          <h2>${esc(title)}</h2>
-          <p>${esc(subtitle)}</p>
+          <div class="result-title-row">
+            <h2>${esc(title)}</h2>
+            <span class="result-status"><span class="status-dot"></span>Verified</span>
+          </div>
+          <div class="result-subline">
+            <span class="meta-chip"><strong>JAVerification</strong></span>
+            <span class="meta-chip">Checked <strong>${esc(now)}</strong></span>
+          </div>
         </div>
         <div class="result-actions">
           <button class="btn green" type="button" data-action="export-pdf">Export PDF</button>
@@ -1450,28 +1584,35 @@ $("panForm").addEventListener("submit",async event => {
     const result = await api(`/api/pan/verify?pan=${encodeURIComponent(pan)}&dob=${encodeURIComponent(dob)}`);
     const data = result.data?.data || {};
 
+    const panStatus = data.status || "—";
+    const aadhaarLink = data.dateOfAadhaarPanLinking || "Not provided";
+    const itrStatus = data.itrFilerOrNonFilerApplicability || "Not provided";
     const body = `
-      <div class="notice success"><b>Verification completed.</b> PAN response received successfully.</div>
+      <div class="notice success"><b>Verification completed.</b> PAN response received successfully and the supplied DOB was accepted.</div>
 
-      <div class="kpis">
-        <div class="kpi"><small>PAN</small><strong>${esc(data.pan || pan)}</strong></div>
-        <div class="kpi"><small>Full Name</small><strong>${esc(data.fullNameAsPan || "—")}</strong></div>
-        <div class="kpi"><small>Status</small><strong>${badge(data.status)}</strong></div>
-        <div class="kpi"><small>Response Time</small><strong>${result.ms} ms</strong></div>
+      <div class="summary-strip">
+        <div class="summary-tile"><small>PAN</small><strong>${esc(data.pan || pan)}</strong><span>Permanent Account Number</span></div>
+        <div class="summary-tile"><small>Full Name</small><strong>${esc(data.fullNameAsPan || "—")}</strong><span>Name as registered</span></div>
+        <div class="summary-tile success"><small>PAN Status</small><strong>${badge(panStatus)}</strong><span>Current verification status</span></div>
+        <div class="summary-tile orange"><small>Response Time</small><strong>${esc(result.ms)} ms</strong><span>API response</span></div>
       </div>
 
-      <div class="info-grid">
+      <div class="section-title">PAN &amp; Compliance Details</div>
+      <div class="enhanced-grid">
         ${info("PAN",data.pan || pan)}
         ${info("Full Name as PAN",data.fullNameAsPan)}
         ${info("PAN Status",data.status)}
-        ${info("Aadhaar-PAN Linking",data.dateOfAadhaarPanLinking || "Not provided")}
-        ${info("ITR Applicability",data.itrFilerOrNonFilerApplicability || "Not provided")}
+        ${info("Aadhaar-PAN Linking",aadhaarLink)}
+        ${info("ITR Applicability",itrStatus)}
         ${info("HTTP Status",result.status)}
       </div>
 
-      <div class="card-actions">
-        <button class="copy-btn" type="button" data-copy="${esc(data.pan || pan)}">Copy PAN</button>
-        <button class="copy-btn" type="button" data-copy="${esc(data.fullNameAsPan || "")}">Copy Name</button>
+      <div class="result-toolbar">
+        <span class="toolbar-note">Response received securely · API payload is not stored in verification history.</span>
+        <div class="card-actions">
+          <button class="copy-btn" type="button" data-copy="${esc(data.pan || pan)}">Copy PAN</button>
+          <button class="copy-btn" type="button" data-copy="${esc(data.fullNameAsPan || "")}">Copy Name</button>
+        </div>
       </div>
     `;
 
@@ -1506,16 +1647,27 @@ $("searchForm").addEventListener("submit",async event => {
     const rows = Array.isArray(result.data?.data) ? result.data.data : [];
 
     let body = `
-      <div class="notice info">Found <b>${rows.length}</b> GST registration record(s) for <b>${esc(pan)}</b>.</div>
+      <div class="notice info">Found <b>${rows.length}</b> GST registration record(s) associated with <b>${esc(pan)}</b>.</div>
     `;
 
     if(!rows.length){
       body += `<div class="empty">No GST registrations were returned for this PAN.</div>`;
     }else{
-      body += `<div class="gstin-grid">`;
+      body += `
+        <div class="summary-strip">
+          <div class="summary-tile"><small>Search PAN</small><strong>${esc(pan)}</strong><span>Input verified</span></div>
+          <div class="summary-tile success"><small>Registrations Found</small><strong>${rows.length}</strong><span>Matching GST registrations</span></div>
+          <div class="summary-tile"><small>Active</small><strong>${rows.filter(x => String(x.sts||"").toLowerCase()==="active").length}</strong><span>Active registrations</span></div>
+          <div class="summary-tile orange"><small>Response Time</small><strong>${esc(result.ms)} ms</strong><span>API response</span></div>
+        </div>
+        <div class="section-title">GST Registration Results</div>
+        <div class="gstin-grid">
+      `;
 
-      rows.forEach((item,index) => {
+      rows.forEach(item => {
         const gstin = item.gstin || "";
+        const status = item.sts || "—";
+        const address = addressText(item.pradr?.addr || {});
         body += `
           <article class="gst-card">
             <div class="gst-top">
@@ -1523,7 +1675,7 @@ $("searchForm").addEventListener("submit",async event => {
                 <div class="gstin-value">${esc(gstin)}</div>
                 <div class="legal">${esc(item.lgnm || "—")}</div>
               </div>
-              ${badge(item.sts)}
+              ${badge(status)}
             </div>
 
             <div class="meta">
@@ -1535,14 +1687,14 @@ $("searchForm").addEventListener("submit",async event => {
               ${mini("E-Invoice",item.einvoiceStatus)}
             </div>
 
-            <div class="address">
-              <b>Principal Address</b><br>
-              ${esc(addressText(item.pradr?.addr || {})) || "—"}
+            <div class="address-card">
+              <div class="address-card-head"><b>Principal Address</b><span class="badge gray">${esc(item.pradr?.addr?.stcd || "—")}</span></div>
+              <div class="address-card-text">${esc(address) || "Address not provided"}</div>
             </div>
 
             <div class="card-actions">
               <button class="copy-btn" type="button" data-copy="${esc(gstin)}">Copy GSTIN</button>
-              <button class="btn light" type="button" data-open-gstin="${esc(gstin)}">View GSTIN</button>
+              <button class="btn light" type="button" data-open-gstin="${esc(gstin)}">View Details</button>
               <button class="btn light" type="button" data-open-returns="${esc(gstin)}">Returns</button>
             </div>
           </article>
@@ -1605,14 +1757,27 @@ $("gstinForm").addEventListener("submit",async event => {
     const body = `
       <div class="notice success"><b>GSTIN details retrieved.</b> Registration information was returned successfully.</div>
 
-      <div class="kpis">
-        <div class="kpi"><small>GSTIN</small><strong>${esc(data.gstin || gstin)}</strong></div>
-        <div class="kpi"><small>Legal Name</small><strong>${esc(data.lgnm || "—")}</strong></div>
-        <div class="kpi"><small>Trade Name</small><strong>${esc(data.tradeNam || "—")}</strong></div>
-        <div class="kpi"><small>Status</small><strong>${badge(data.sts)}</strong></div>
+      <div class="gstin-hero">
+        <div class="gstin-identity">
+          <div class="gstin-code">${esc(data.gstin || gstin)}</div>
+          <div class="gstin-name">${esc(data.lgnm || "Legal name not provided")}</div>
+          <div class="gstin-trade">${esc(data.tradeNam || "Trade name not provided")}</div>
+        </div>
+        <div class="gstin-state">
+          <small>Registration Status</small>
+          ${badge(data.sts)}
+        </div>
       </div>
 
-      <div class="info-grid">
+      <div class="summary-strip">
+        <div class="summary-tile"><small>Taxpayer Type</small><strong>${esc(data.dty || "—")}</strong><span>Registration type</span></div>
+        <div class="summary-tile"><small>Constitution</small><strong>${esc(data.ctb || "—")}</strong><span>Legal constitution</span></div>
+        <div class="summary-tile"><small>Registration Date</small><strong>${esc(data.rgdt || "—")}</strong><span>GST registration</span></div>
+        <div class="summary-tile orange"><small>Response Time</small><strong>${esc(result.ms)} ms</strong><span>API response</span></div>
+      </div>
+
+      <div class="section-title">Registration &amp; Business Details</div>
+      <div class="enhanced-grid">
         ${info("GSTIN",data.gstin || gstin)}
         ${info("Legal Name",data.lgnm)}
         ${info("Trade Name",data.tradeNam)}
@@ -1622,19 +1787,27 @@ $("gstinForm").addEventListener("submit",async event => {
         ${info("Last Updated",data.lstupdt)}
         ${info("Nature of Business",data.pradr?.ntr || data.nba?.join(", "))}
         ${info("E-Invoice",data.einvoiceStatus)}
+      </div>
+
+      <div class="section-title">Location</div>
+      <div class="enhanced-grid">
         ${info("State",address.stcd)}
         ${info("District",address.dst)}
         ${info("Pincode",address.pncd)}
       </div>
 
-      <div class="address">
-        <b>Principal Address</b><br>${esc(addressText(address)) || "—"}
+      <div class="address-card">
+        <div class="address-card-head"><b>Principal Address</b><span class="badge gray">${esc(address.stcd || "—")}</span></div>
+        <div class="address-card-text">${esc(addressText(address)) || "Address not provided"}</div>
       </div>
 
-      <div class="card-actions">
-        <button class="copy-btn" type="button" data-copy="${esc(data.gstin || gstin)}">Copy GSTIN</button>
-        <button class="copy-btn" type="button" data-copy="${esc(data.lgnm || "")}">Copy Legal Name</button>
-        <button class="copy-btn" type="button" data-copy="${esc(addressText(address))}">Copy Address</button>
+      <div class="result-toolbar">
+        <span class="toolbar-note">Registration information retrieved successfully · HTTP ${esc(result.status)}</span>
+        <div class="card-actions">
+          <button class="copy-btn" type="button" data-copy="${esc(data.gstin || gstin)}">Copy GSTIN</button>
+          <button class="copy-btn" type="button" data-copy="${esc(data.lgnm || "")}">Copy Legal Name</button>
+          <button class="copy-btn" type="button" data-copy="${esc(addressText(address))}">Copy Address</button>
+        </div>
       </div>
     `;
 
@@ -1672,17 +1845,19 @@ $("returnsForm").addEventListener("submit",async event => {
     const filed = rows.filter(x => String(x.status || "").toLowerCase() === "filed").length;
 
     const body = `
-      <div class="notice success"><b>Return data retrieved.</b> ${rows.length} record(s) returned.</div>
+      <div class="notice success"><b>Return data retrieved.</b> ${rows.length} record(s) returned for FY ${esc(fy)}.</div>
 
-      <div class="kpis">
-        <div class="kpi"><small>GSTIN</small><strong>${esc(gstin)}</strong></div>
-        <div class="kpi"><small>Financial Year</small><strong>${esc(fy)}</strong></div>
-        <div class="kpi"><small>Records</small><strong>${rows.length}</strong></div>
-        <div class="kpi"><small>Filed</small><strong>${filed}</strong></div>
+      <div class="return-summary">
+        <div class="return-tile"><small>GSTIN</small><strong>${esc(gstin)}</strong></div>
+        <div class="return-tile"><small>Financial Year</small><strong>${esc(fy)}</strong></div>
+        <div class="return-tile"><small>Total Records</small><strong>${rows.length}</strong></div>
+        <div class="return-tile success"><small>Filed</small><strong>${filed}</strong></div>
+        <div class="return-tile"><small>Response Time</small><strong>${esc(result.ms)} ms</strong></div>
       </div>
 
+      <div class="section-title">Filing History</div>
       <div class="table-wrap">
-        <table>
+        <table class="return-table">
           <thead>
             <tr>
               <th>Return</th><th>Period</th><th>Filing Date</th>
@@ -1699,7 +1874,7 @@ $("returnsForm").addEventListener("submit",async event => {
                   <td>${esc(row.dof)}</td>
                   <td>${badge(row.status)}</td>
                   <td>${esc(row.mof)}</td>
-                  <td>${esc(row.arn)}</td>
+                  <td class="arn-cell">${esc(row.arn)}</td>
                   <td>${esc(row.valid)}</td>
                 </tr>
               `).join("")
@@ -1707,6 +1882,10 @@ $("returnsForm").addEventListener("submit",async event => {
             }
           </tbody>
         </table>
+      </div>
+
+      <div class="result-toolbar">
+        <span class="toolbar-note">GSTR-1 / GSTR-3B filing records · Retrieved from verification service</span>
       </div>
     `;
 
