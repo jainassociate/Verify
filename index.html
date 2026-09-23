@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b2a49">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>JAVerification | Jain and Associates</title>
 <meta name="description" content="JAVerification by Jain and Associates — PAN, GSTIN and GST return verification.">
 <style>
@@ -361,7 +362,7 @@ tr:last-child td{border-bottom:0}
   .result-head{border-bottom:1px solid #ddd}
 }
 </style>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'nonce-JA-20260922-7f6c2d9a4b8e1c53'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; media-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'nonce-JA-20260923-JAVerification'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://fetch.jadrive.workers.dev; font-src 'self'; media-src 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests">
 </head>
 <body>
 <div class="app">
@@ -373,7 +374,7 @@ tr:last-child td{border-bottom:0}
     <strong>Jain and Associates</strong>
   </div>
   <button class="system-status neutral" id="systemStatus" type="button" data-action="open-api-modal" aria-label="Open system status">
-    <span class="dot"></span><span id="systemStatusText">Checking...</span>
+    <span class="dot"></span><span id="systemStatusText">System Ready</span>
   </button>
 </header>
 
@@ -433,7 +434,7 @@ tr:last-child td{border-bottom:0}
       <span class="badge blue">PAN</span>
     </div>
 
-    <form id="panForm" novalidate>
+    <form id="panForm" novalidate autocomplete="off">
       <div class="form-grid">
         <div class="field">
           <label for="pan">Permanent Account Number (PAN) <span class="required">*</span></label>
@@ -479,7 +480,7 @@ tr:last-child td{border-bottom:0}
       <span class="badge green">GST Search</span>
     </div>
 
-    <form id="searchForm" novalidate>
+    <form id="searchForm" novalidate autocomplete="off">
       <div class="field">
         <label for="searchPan">Permanent Account Number (PAN) <span class="required">*</span></label>
         <div class="input-wrap">
@@ -513,7 +514,7 @@ tr:last-child td{border-bottom:0}
       <span class="badge green">GSTIN</span>
     </div>
 
-    <form id="gstinForm" novalidate>
+    <form id="gstinForm" novalidate autocomplete="off">
       <div class="field">
         <label for="gstin">GSTIN Number <span class="required">*</span></label>
         <div class="input-wrap">
@@ -547,7 +548,7 @@ tr:last-child td{border-bottom:0}
       <span class="badge amber">Returns</span>
     </div>
 
-    <form id="returnsForm" novalidate>
+    <form id="returnsForm" novalidate autocomplete="off">
       <div class="form-grid">
         <div class="field">
           <label for="returnGstin">GSTIN Number <span class="required">*</span></label>
@@ -584,7 +585,7 @@ tr:last-child td{border-bottom:0}
 <section class="view" id="historyView">
   <div class="page-head">
     <h1>Verification Logs</h1>
-    <p>Recent verification activity stored locally in this browser.</p>
+    <p>Recent verification activity stored only for this browser session. API response data is never stored.</p>
   </div>
 
   <div class="history-card">
@@ -630,18 +631,20 @@ tr:last-child td{border-bottom:0}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script nonce="JA-20260922-7f6c2d9a4b8e1c53">
+<script nonce="JA-20260923-JAVerification">
 /*
-  JAVerification — production frontend
-  ------------------------------------
-  No API base URL, API key, or Unique ID is stored in this frontend.
-
-  The HTML is intended to be served by the same Cloudflare Worker that
-  exposes the /api/* routes. The Worker keeps API_BASE, API_KEY and
-  UNIQUE_ID in its environment/secrets and injects UNIQUE_ID server-side
-  when the upstream GSTIN endpoint requires it.
+  JAVerification — GitHub Pages production frontend
+  -------------------------------------------------
+  IMPORTANT:
+  - API_BASE is PUBLIC configuration. It is NOT a secret.
+  - API_KEY and UNIQUE_ID must remain only in the Cloudflare Worker.
+  - GitHub Pages is static hosting, so /api/* cannot be used as a relative
+    path unless a reverse proxy serves the same origin.
+  - API responses are never persisted to localStorage/sessionStorage/history.
+  - PAN, DOB and GSTIN input values are kept only in the live page/session.
 */
 
+const API_BASE = "https://fetch.jadrive.workers.dev";
 const $ = id => document.getElementById(id);
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const GSTIN_REGEX = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
@@ -859,20 +862,40 @@ function resetSessionTimeout(){
   clearTimeout(sessionExpiryTimer);
   sessionExpiryTimer = setTimeout(() => {
     sessionStorage.removeItem("JA_VERIFICATION_HISTORY");
+
     ["pan","dob","searchPan","gstin","returnGstin"].forEach(id => {
       const el = $(id);
       if(el) el.value = "";
     });
+
     ["panForm","searchForm","gstinForm","returnsForm"].forEach(clearForm);
+
+    ["panInline","searchInline","gstinInline","returnsInline"].forEach(id => {
+      const el = $(id);
+      if(el) el.replaceChildren();
+    });
+
+    latestResult = null;
     renderHistory();
     toast("Session expired. Verification history and entered data were cleared.");
   }, SESSION_TIMEOUT_MS);
 }
 
+let lastActivityRefresh = 0;
+
+function markSessionActivity(){
+  const now = Date.now();
+  // Avoid resetting the timeout on every mousemove event.
+  if(now - lastActivityRefresh < 10000) return;
+  lastActivityRefresh = now;
+  resetSessionTimeout();
+}
+
 function startSessionSecurity(){
-  ["click","keydown","mousemove","touchstart","input"].forEach(eventName => {
-    document.addEventListener(eventName, resetSessionTimeout, {passive:true});
+  ["click","keydown","touchstart","input"].forEach(eventName => {
+    document.addEventListener(eventName, markSessionActivity, {passive:true});
   });
+  document.addEventListener("mousemove", markSessionActivity, {passive:true});
   resetSessionTimeout();
 }
 
@@ -894,17 +917,23 @@ function firstApiMessage(value){
   return "";
 }
 
-function classifyApiFailure(status, data, rawText = ""){
+function classifyApiFailure(status, data, contentType = ""){
   const nestedStatus = Number(data?.status || data?.data?.status || 0) || 0;
-  const message = firstApiMessage(data) || firstApiMessage(data?.data) || rawText.trim();
+  const message = firstApiMessage(data);
   const lower = message.toLowerCase();
-  const payloadEmpty = data && typeof data === "object" &&
-    data.success === false &&
-    data.data && typeof data.data === "object" &&
-    !Array.isArray(data.data) && Object.keys(data.data).length === 0;
+
+  if(!contentType.toLowerCase().includes("application/json") && status >= 200 && status < 300){
+    return {
+      kind:"INVALID_RESPONSE",
+      title:"Verification service returned an invalid response",
+      message:"The verification service did not return the expected JSON response.",
+      detail:"Unexpected content type",
+      help:"Please retry. If the issue continues, check the Cloudflare Worker response."
+    };
+  }
 
   // API can return HTTP 200/206 while the actual verification failed inside JSON.
-  if(nestedStatus === 400 || /invalid pan/.test(lower)){
+  if(nestedStatus === 400 || /invalid\s*pan|pan.*invalid/.test(lower)){
     return {
       kind:"INVALID_PAN",
       title:"PAN could not be verified",
@@ -914,13 +943,23 @@ function classifyApiFailure(status, data, rawText = ""){
     };
   }
 
-  if(/invalid gstin/.test(lower) || /gstin.*invalid/.test(lower)){
+  if(/invalid\s*gstin|gstin.*invalid/.test(lower)){
     return {
       kind:"INVALID_GSTIN",
       title:"Invalid GSTIN",
       message:"The GSTIN verification service reported the GSTIN as invalid.",
       detail:"Invalid GSTIN response",
       help:"Check the 15-character GSTIN and try again."
+    };
+  }
+
+  if(/no\s+(record|data|match)|not\s+found|does\s+not\s+exist|no\s+gst(in)?\s*(record|registration)|no\s+filing/.test(lower)){
+    return {
+      kind:"NOT_FOUND",
+      title:"No matching record found",
+      message:"The verification service did not return a matching record for the supplied information.",
+      detail:"No matching record",
+      help:"Verify the input and try again. A matching record may not exist."
     };
   }
 
@@ -940,7 +979,7 @@ function classifyApiFailure(status, data, rawText = ""){
       title:"Verification service route not found",
       message:"The requested API endpoint was not found on the Worker.",
       detail:"HTTP 404",
-      help:"Check the Worker deployment and the /api route configuration."
+      help:"Check the Cloudflare Worker deployment and the /api route configuration."
     };
   }
 
@@ -964,15 +1003,34 @@ function classifyApiFailure(status, data, rawText = ""){
     };
   }
 
+  if(status === 400){
+    return {
+      kind:"INVALID_REQUEST",
+      title:"Invalid verification request",
+      message:"The verification service rejected the request.",
+      detail:"HTTP 400",
+      help:"Check the entered information and try again."
+    };
+  }
+
   if(status >= 500){
     return {
       kind:"SERVER_ERROR",
       title:"Verification service is temporarily unavailable",
-      message:"The Worker or upstream verification service returned a server error.",
+      message:"The verification service returned a server error.",
       detail:`HTTP ${status}`,
-      help:"Retry shortly. If the problem continues, check Worker and upstream API logs."
+      help:"Retry shortly. If the problem continues, check the Cloudflare Worker and upstream API."
     };
   }
+
+  const payloadEmpty =
+    data &&
+    typeof data === "object" &&
+    data.success === false &&
+    data.data &&
+    typeof data.data === "object" &&
+    !Array.isArray(data.data) &&
+    Object.keys(data.data).length === 0;
 
   if(payloadEmpty || (status === 206 && data?.success === false)){
     return {
@@ -984,11 +1042,11 @@ function classifyApiFailure(status, data, rawText = ""){
     };
   }
 
-  if(data?.success === false || !status || !responseStatusIsSuccessful(status)){
+  if(data?.success === false || !responseStatusIsSuccessful(status)){
     return {
       kind:"API_ERROR",
       title:"Verification request was not successful",
-      message:status === 400 ? "The verification service rejected the request." : "The verification service could not complete the request.",
+      message:"The verification service could not complete the request.",
       detail:status ? `HTTP ${status}` : "No HTTP status received",
       help:"Check the input and retry. If the issue persists, check the API service."
     };
@@ -1005,18 +1063,35 @@ async function api(path){
   const start = performance.now();
   let response;
 
+  // Only allow our own API paths to be called from this frontend.
+  if(typeof path !== "string" || !path.startsWith("/api/")){
+    throw Object.assign(new Error("Invalid API route."),{
+      code:"INVALID_ROUTE",
+      kind:"API_ERROR",
+      title:"Invalid verification request",
+      userMessage:"The verification request could not be prepared.",
+      help:"Please refresh the page and try again."
+    });
+  }
+
+  const url = `${API_BASE}${path}`;
+
   try{
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
-    try {
-      response = await fetch(path,{
+
+    try{
+      response = await fetch(url,{
         method:"GET",
-        headers:{"Accept":"application/json"},
+        headers:{
+          "Accept":"application/json"
+        },
         credentials:"omit",
         cache:"no-store",
-        signal: controller.signal
+        referrerPolicy:"strict-origin-when-cross-origin",
+        signal:controller.signal
       });
-    } finally {
+    }finally{
       clearTimeout(timeoutId);
     }
   }catch(error){
@@ -1024,55 +1099,69 @@ async function api(path){
     throw Object.assign(
       new Error(timedOut ? "The verification service timed out." : "Unable to connect to the verification service."),
       {
-        code: timedOut ? "TIMEOUT" : "NETWORK_ERROR",
-        kind: timedOut ? "TIMEOUT" : "NETWORK_ERROR",
-        title: timedOut ? "Verification service timed out" : "Unable to connect to verification service",
-        userMessage: timedOut
+        code:timedOut ? "TIMEOUT" : "NETWORK_ERROR",
+        kind:timedOut ? "TIMEOUT" : "NETWORK_ERROR",
+        title:timedOut ? "Verification service timed out" : "Unable to connect to verification service",
+        userMessage:timedOut
           ? "The verification service did not respond within 15 seconds."
           : "The browser could not reach the verification service.",
-        help: timedOut
+        help:timedOut
           ? "Please wait a moment and retry."
-          : "Check your internet connection and confirm that the Cloudflare Worker is online.",
+          : "Check your internet connection and confirm that the Cloudflare Worker allows this website origin.",
         cause:error
       }
     );
   }
 
   const elapsed = Math.round(performance.now() - start);
+  const contentType = response.headers.get("content-type") || "";
   const text = await response.text();
   let data = null;
 
-  try{ data = text ? JSON.parse(text) : null; }
-  catch{ data = {raw:text}; }
+  // Do not render arbitrary upstream HTML/text. JSON is the only accepted
+  // response format for verification endpoints.
+  if(contentType.toLowerCase().includes("application/json")){
+    try{
+      data = text ? JSON.parse(text) : null;
+    }catch{
+      data = null;
+    }
+  }else{
+    data = null;
+  }
 
-  const failure = classifyApiFailure(response.status,data,text);
+  const failure = classifyApiFailure(response.status,data,contentType);
+
   if(!response.ok || failure){
     if(["NETWORK_ERROR","TIMEOUT","SERVER_ERROR","AUTH_ERROR","ROUTE_NOT_FOUND"].includes(failure?.kind)){
-      const status = $("systemStatus");
-      const statusText = $("systemStatusText");
-      if(status && statusText){
-        status.className = "system-status bad";
-        statusText.textContent = failure?.kind === "TIMEOUT" ? "API Timeout" : "API Issue";
+      const statusEl = $("systemStatus");
+      const statusTextEl = $("systemStatusText");
+      if(statusEl && statusTextEl){
+        statusEl.className = "system-status bad";
+        statusTextEl.textContent =
+          failure?.kind === "TIMEOUT" ? "API Timeout" : "API Issue";
       }
     }
+
     const detail = failure?.detail || `HTTP ${response.status}`;
+
     throw Object.assign(
-      new Error(failure?.message || firstApiMessage(data) || `Request failed (HTTP ${response.status})`),
+      new Error(failure?.message || `Request failed (HTTP ${response.status})`),
       {
         status:response.status,
+        // Keep structured response in memory only; never persist it.
         data,
         ms:elapsed,
         code:failure?.kind || `HTTP_${response.status}`,
         kind:failure?.kind || "API_ERROR",
         title:failure?.title || "Verification request failed",
-        userMessage:failure?.message || firstApiMessage(data) || `The verification service returned HTTP ${response.status}.`,
+        userMessage:failure?.message || `The verification service returned HTTP ${response.status}.`,
         detail,
         help:failure?.help || "Please retry the verification."
       }
     );
   }
 
-  // A successful API call is also a live health signal.
   const statusEl = $("systemStatus");
   const statusTextEl = $("systemStatusText");
   if(statusEl && statusTextEl){
@@ -1159,14 +1248,18 @@ async function checkHealth(options = {}){
       $("apiService").textContent = "Jain & Associates API";
       $("apiChecked").textContent = new Date().toLocaleTimeString("en-IN");
       $("apiError").innerHTML =
-        `<div class="notice warn"><b>Connection issue.</b><br>${esc(error.message)}<br><br>Check the Worker route, CORS configuration and server-side API secret.</div>`;
+        `<div class="notice warn"><b>Connection issue.</b><br>${esc(error.userMessage || "The verification service could not be reached.")}<br><br>Check the Worker route and CORS configuration.</div>`;
     }
   }
 }
 
 function openApiModal(){
   $("apiModal").classList.add("open");
-  checkHealth();
+
+  // Avoid unnecessary repeated health calls when the user just checked.
+  if(!lastHealth || (Date.now() - lastHealth.time.getTime()) > 60 * 1000){
+    checkHealth();
+  }
 }
 function closeApiModal(){
   $("apiModal").classList.remove("open");
@@ -1240,9 +1333,10 @@ function exportPDF(){
 }
 
 function maskSensitiveIdentifier(value){
-  const text = String(value ?? "");
+  const text = String(value ?? "").trim().toUpperCase();
   if(PAN_REGEX.test(text)) return `${text.slice(0,2)}******${text.slice(-2)}`;
   if(GSTIN_REGEX.test(text)) return `${text.slice(0,2)}***********${text.slice(-2)}`;
+  // Never persist DOB, free-form input, API responses or request URLs.
   return "Verification request";
 }
 
@@ -1363,7 +1457,7 @@ $("panForm").addEventListener("submit",async event => {
     `;
 
     saveHistory("PAN",pan,"PAN Verification");
-    resultCard("PAN Verification",`${pan} · DOB ${dob}`,body,"panInline");
+    resultCard("PAN Verification",`${maskSensitiveIdentifier(pan)} · DOB verified`,body,"panInline");
   }catch(error){
     saveHistory("PAN",pan,"PAN Verification","Failed");
     resultCard(
@@ -1671,27 +1765,6 @@ document.addEventListener("keydown",event => {
 
 window.addEventListener("resize",() => {
   if(window.innerWidth > 850) closeSidebar();
-});
-
-/* SECURITY: basic browser UI deterrents.
-   These do NOT replace server-side security controls. */
-document.addEventListener("contextmenu", event => {
-  event.preventDefault();
-});
-
-document.addEventListener("keydown", event => {
-  const key = event.key.toLowerCase();
-
-  const blocked =
-    event.key === "F12" ||
-    (event.ctrlKey && event.shiftKey && ["i", "j", "c"].includes(key)) ||
-    (event.ctrlKey && key === "u") ||
-    (event.metaKey && event.altKey && ["i", "j", "c"].includes(key));
-
-  if (blocked) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
 });
 
 /* SECURITY: centralized event handling; no inline onclick handlers. */
