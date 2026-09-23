@@ -1,0 +1,75 @@
+name: Deploy JAVerification
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Verify
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject frontend configuration
+        env:
+          API_BASE: ${{ vars.API_BASE }}
+          API_KEY: ${{ secrets.API_KEY }}
+          UNIQUE_ID: ${{ secrets.UNIQUE_ID }}
+        run: |
+          python3 <<'PY'
+          import os
+          from pathlib import Path
+
+          path = Path("index.html")
+          html = path.read_text(encoding="utf-8")
+
+          replacements = {
+              "__API_BASE__": os.environ["API_BASE"],
+              "__API_KEY__": os.environ["API_KEY"],
+              "__UNIQUE_ID__": os.environ["UNIQUE_ID"],
+          }
+
+          for key, value in replacements.items():
+              if key not in html:
+                  raise SystemExit(f"Placeholder not found: {key}")
+              html = html.replace(key, value)
+
+          path.write_text(html, encoding="utf-8")
+          PY
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
