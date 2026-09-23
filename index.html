@@ -633,28 +633,19 @@ tr:last-child td{border-bottom:0}
 
 <script nonce="JA-20260923-JAVerification">
 /*
-  JAVerification — GitHub Pages production frontend
-  -------------------------------------------------
-  IMPORTANT:
-  - API_BASE is PUBLIC configuration. It is NOT a secret.
-  - API_KEY and UNIQUE_ID must remain only in the Cloudflare Worker.
-  - GitHub Pages is static hosting, so /api/* cannot be used as a relative
-    path unless a reverse proxy serves the same origin.
+  JAVerification — STATIC GITHUB PAGES FRONTEND
+  ---------------------------------------------
+  - This is a single self-contained HTML file.
+  - No GitHub Actions build-time variables are required.
+  - API_BASE, API_KEY and UNIQUE_ID are embedded directly in this file.
+  - The Cloudflare Worker remains the API gateway.
   - API responses are never persisted to localStorage/sessionStorage/history.
   - PAN, DOB and GSTIN input values are kept only in the live page/session.
+  - Anything embedded in browser JavaScript is visible to website visitors.
 */
 
-/*
- * JAVerification — self-contained frontend configuration
- *
- * API_BASE is intentionally built into this HTML file.
- *
- * IMPORTANT:
- * The current Cloudflare Worker requires X-API-Key and unique_id.
- * Replace the two placeholders below with the values used by your Worker.
- *
- * Anything placed in this browser file is visible to website visitors.
- */
+/* Static API configuration used directly by the browser. */
+
 const API_BASE = "https://fetch.jadrive.workers.dev";
 const API_KEY = "HJA_HJ29032000$SJ22112003$DJ02052000";
 const UNIQUE_ID = "j2tN43e8Vnt3Kg06974MyfSaxtgKQF";
@@ -1078,9 +1069,7 @@ async function api(path){
   if(
     !API_BASE ||
     !API_KEY ||
-    API_KEY === "HJA_HJ29032000$SJ22112003$DJ02052000" ||
-    !UNIQUE_ID ||
-    UNIQUE_ID === "j2tN43e8Vnt3Kg06974MyfSaxtgKQF"
+    !UNIQUE_ID
   ){
     throw Object.assign(new Error("Frontend API configuration is incomplete."),{
       code:"CONFIG_ERROR",
